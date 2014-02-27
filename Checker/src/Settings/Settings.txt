@@ -1,0 +1,4 @@
+English
+1280:720
+/AIs/AIs.txt
+/Graphics/graphics.txt

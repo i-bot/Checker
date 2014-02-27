@@ -1,0 +1,4 @@
+menu_background:
+/Graphics/menu_background/Menu_Background.png
+world_icon:
+/Graphics/world_icon/World1_Background_Little.png
