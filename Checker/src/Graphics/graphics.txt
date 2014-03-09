@@ -1,4 +1,10 @@
 menu_background:
 /Graphics/menu_background/Menu_Background.png
-world_icon:
-/Graphics/world_icon/World1_Background_Little.png
+/Graphics/menu_background/Menu_Background_Local_Game.png
+/Graphics/menu_background/Menu_Background_Game.png
+game_images:
+/Graphics/game_images/Default_Board.png
+/Graphics/game_images/Piece_Light.png
+/Graphics/game_images/Piece_Dark.png
+/Graphics/game_images/Piece_Light_Selected.png
+/Graphics/game_images/Piece_Dark_Selected.png

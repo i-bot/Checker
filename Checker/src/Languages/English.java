@@ -25,6 +25,7 @@ public class English extends Language{
 		buttonAndMenuTitle.add("OK");//16
 		buttonAndMenuTitle.add("Player1");//17
 		buttonAndMenuTitle.add("Player2");//18
+		buttonAndMenuTitle.add("Game Menu");//19
 	}
 	
 	String getButtonAndMenuTitle(int index) {

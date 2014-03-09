@@ -15,7 +15,7 @@ public class OptionsMenu extends Menu{
 
 		add(new NormalButton(0, Languages.getButtonAndMenuTitle(0), TitleOrientation.MID, 35, 815, 270, 50, 255, 255, 0));
 		
-		add(new Label("This function has not been etablished yet.", TitleOrientation.LEFT, 355, 50, 640, 920));
+		add(new Label("This function has not been etablished yet.", TitleOrientation.LEFT, 355, 30, 640, 920));
 	}
 	
 	public void createNonStaticContainersAndSubMenus(){}

@@ -12,7 +12,7 @@ public class Main {
 	static{
 		path = Main.class.getResource("Main.class").getPath();
 		if(path.contains("file:/") && path.contains(".jar!")){
-//		Program uses this source if it is exported as a .jar
+//		Program uses this path if it is exported as a .jar
 			path = Main.class.getResource("Main.txt").getPath();
 			path = path.replaceFirst("file:", "");
 			path = path.substring(0, path.indexOf(".jar!"));
@@ -20,7 +20,7 @@ public class Main {
 			System.out.println(path);
 		}
 		else{
-//		Program uses this source if it runs on eclipse
+//		Program uses this path if it runs on eclipse
 			path = "src";
 		}
 	}

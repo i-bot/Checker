@@ -23,6 +23,7 @@ public class MenuHandler extends JFrame{
 		menus.put(2, new AIMenu());
 		menus.put(11, new DeleteAIMenu());
 		menus.put(5, new LocalGameMenu());
+		menus.put(19, new GameMenu());
 	}
 
 	public static void changeMenu(int id){
@@ -47,9 +48,12 @@ public class MenuHandler extends JFrame{
 
 	public static void checkMouseInput(MousePoint point){
 		Button b = menus.get(menu_ID).getClickedButton(point);
-		ArrayList<ButtonListener> bl = menus.get(menu_ID).getButtonListeners();
 
-		for(int i=0; i < bl.size(); i++) bl.get(i).clicked(b);
+		if(b != null){
+			ArrayList<ButtonListener> bl = menus.get(menu_ID).getButtonListeners();
+
+			for(int i=0; i < bl.size(); i++) bl.get(i).clicked(b);
+		}
 	}
 
 	public static void checkKeyboardInput(KeyEvent event){

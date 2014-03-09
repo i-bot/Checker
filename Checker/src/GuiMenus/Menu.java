@@ -94,8 +94,8 @@ public abstract class Menu{
 	}
 	
 	public TextField getSelectedTextField(){
-		for(int i=subMenus.size()-1; i>=0; i--)if(subMenus.get(i).isAnyTextFieldIsSelected())return subMenus.get(i).getSelectedTextField();
-		for(int i=containers.size()-1; i>=0; i--)if(containers.get(i).isAnyTextFieldIsSelected())return containers.get(i).getSelectedTextField();
+		for(int i=subMenus.size()-1; i>=0; i--)if(subMenus.get(i).isAnyTextFieldSelected())return subMenus.get(i).getSelectedTextField();
+		for(int i=containers.size()-1; i>=0; i--)if(containers.get(i).isAnyTextFieldSelected()  && containers.get(i).visible)return containers.get(i).getSelectedTextField();
 		for(int i=guiElements.size()-1; i>=0; i--){
 			GuiElement b = guiElements.get(i);
 			if(b instanceof TextField && ((TextField) b).isSelected() && b.getVisible())return (TextField) b;

@@ -1,26 +1,43 @@
 package GameEngine;
 
-import java.util.ArrayList;
+import java.awt.Point;
 
-import BaseEntities.BaseEntity;
+public class GameEngine {
 
-public class GameEngine implements Runnable{
+	private static Game game;
+	private static CheckerBoard checkerBoard;
 
-	GameLoop loop;
-	
-	public void run(){}
-	
-	public void start(){
-		ArrayList<BaseEntity> entities = Levels.translate(GameSettings.level.getLocation());
-		loop = new GameLoop();
-		loop.start(entities);
+	public static void init(Game game){
+		GameEngine.game = game;
+		checkerBoard = new CheckerBoard();
 	}
 	
-	public void stop(){
-		loop.stop();
+	public static Game getCurrentGame(){
+		return game;
 	}
 	
-	public void continueLoop(){
-		loop.continueLoop();
+	public static CheckerBoard getCurrentCheckerBoard(){
+		return checkerBoard;
 	}
+	
+	public static Player getCurrentPlayer(){
+		return game.getCurrentPlayer(); 
+	} 
+	
+	public static void handleMouseInput(int x, int y){
+		if(getCurrentPlayer() instanceof RealPlayer){
+			RealPlayer currentPlayer = (RealPlayer) getCurrentPlayer();
+			Piece selectedPiece = checkerBoard.getPiece(x, y);
+			Move currentMove = null;
+			if(selectedPiece != null && selectedPiece.getPieceColor() == currentPlayer.getColor_Player())
+				currentPlayer.handleSelecetedPiece(selectedPiece);
+			else if(selectedPiece == null && currentPlayer.hasPieceSelected())
+				currentMove = currentPlayer.handleDestinationPoint(new Point(x, y));
+			
+			if(currentMove != null)
+				checkerBoard.executeMove(currentMove);
+		}
+		
+		Gui.Gui.repaintScreen();
+	} 
 }

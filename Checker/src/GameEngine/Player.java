@@ -1,21 +1,19 @@
 package GameEngine;
 
-import AIs.AI;
-
-public class Player {
-
-	private AI ai;
+public abstract class Player {
 	
-	public Player() {
-		ai = null;
+	protected String name;
+	protected Color color_player;
+	
+	public Player(Color color_player){
+		this.color_player = color_player;
 	}
 	
-	public Player(AI ai){
-		this.ai = ai;
+	public String getName(){
+		return name;
 	}
 	
-	public AI getAI(){
-		return ai;
+	public Color getColor_Player(){
+		return color_player;
 	}
-
 }

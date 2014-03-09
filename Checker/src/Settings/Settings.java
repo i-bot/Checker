@@ -20,7 +20,7 @@ public class Settings {
 	private static void readSettings(){
 		settings = new ArrayList<String>();
 		
-		File file = new File(path+"/Settings/Settings.txt");
+		File file = new File(path + "/Settings/Settings.txt");
 		
 		Scanner scanner = null;
 		try {scanner = new Scanner(file);} 

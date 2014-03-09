@@ -35,14 +35,14 @@ public class AIArea extends Area<AI>{
 	@Override
 	public void initialize() {
 		guiElements.clear();
-		
+	
 		ai_numberOnThisPage = 1;
 		ai = default_ai;
 		ai_number = AIs.getAI_Number();
-		max_buttons_onThisPage = (ai_number == rows*columns)? rows*columns : (ai_number - ai <= rows*columns-1)? ai_number - ai : rows*columns-1;
+		max_buttons_onThisPage = (ai_number == rows*columns)? rows*columns : (ai_number - ai <= rows*columns-1)? ai_number - ai : rows * columns - 1;
 
-		if(ai + rows * columns - 1 < ai_number) add(new NormalButton(7, Languages.getButtonAndMenuTitle(7), TitleOrientation.MID, 1275, 760, width, 50, 255, 255, 0));
-		if(ai - rows * columns + 1 >= 0) add(new NormalButton(8, Languages.getButtonAndMenuTitle(8), TitleOrientation.MID, 1275, 820, width, 50, 255, 255, 0));
+		if(ai + rows * columns - 1 < ai_number) add(new NormalButton(7, Languages.getButtonAndMenuTitle(7), TitleOrientation.MID, x + (row_pitch + width) * rows - width, y + (column_pitch + height) * columns - 100 - column_pitch, width, 50, 255, 255, 0));
+		if(ai - rows * columns + 1 >= 0) add(new NormalButton(8, Languages.getButtonAndMenuTitle(8), TitleOrientation.MID, x + (row_pitch + width) * rows - width, y + (column_pitch + height) * columns - 50, width, 50, 255, 255, 0));
 		
 		for(int z = 0, y = super.y + column_pitch; ai_numberOnThisPage <= max_buttons_onThisPage; ai++, z++, ai_numberOnThisPage++){
 			int x = super.x + row_pitch + (width + row_pitch) * z;

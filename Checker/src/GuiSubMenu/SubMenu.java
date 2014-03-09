@@ -57,6 +57,7 @@ public abstract class SubMenu{
 	public Boolean isClicked(MousePoint point){
 		for(GuiElement ge : guiElements){
 			if(ge instanceof Button && ge.getVisible() && ((Button) ge).isClicked(point))return true;
+			if(ge instanceof TextField && ge.getVisible() && ((TextField) ge).isClicked(point)) return true;	
 			if(ge instanceof TextField && ge.getVisible() && ((TextField) ge).isClicked(point))return true;
 		}
 		for(Container c : containers)if(c.isClicked(point))return true;	
@@ -78,8 +79,8 @@ public abstract class SubMenu{
 		return null;
 	}
 	
-	public Boolean isAnyTextFieldIsSelected(){
-		for(int i=containers.size()-1; i>=0; i--)if(containers.get(i).isAnyTextFieldIsSelected())return true;
+	public Boolean isAnyTextFieldSelected(){
+		for(int i=containers.size()-1; i>=0; i--)if(containers.get(i).isAnyTextFieldSelected())return true;
 		for(int i=guiElements.size()-1; i>=0; i--){
 			GuiElement b = guiElements.get(i);
 			if(b instanceof TextField && ((TextField) b).isSelected() && b.getVisible())return true;

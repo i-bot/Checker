@@ -10,31 +10,34 @@ import KeyInput.MousePoint;
 public class Container {
 	ArrayList<GuiElement> guiElements = new ArrayList<GuiElement>();
 	Boolean visible = true;
-	
+
 	public void add(GuiElement ge){
 		guiElements.add(ge);
 	}
-	
+
 	public void clear(){
 		guiElements = new ArrayList<GuiElement>();
 	}
-	
+
 	public void repaint(){
 		MenuHandler.changeMenu(MenuHandler.getShownMenu());
 	}
-	
+
 	public void drawMe(Graphics g){
 		if(visible)for(int i=0; i<guiElements.size(); i++)guiElements.get(i).drawMe(g);
 	}
-	
+
 	public Boolean isClicked(MousePoint point){
-		for(GuiElement ge : guiElements){
-			if(ge instanceof Button && ge.getVisible() && ((Button) ge).isClicked(point)) return true;	
-			if(ge instanceof Area<?> && ge.getVisible() && ((Area<?>) ge).isClicked(point)) return true;
+		if(visible){
+			for(GuiElement ge : guiElements){
+				if(ge instanceof Button && ge.getVisible() && ((Button) ge).isClicked(point)) return true;	
+				if(ge instanceof TextField && ge.getVisible() && ((TextField) ge).isClicked(point)) return true;	
+				if(ge instanceof Area<?> && ge.getVisible() && ((Area<?>) ge).isClicked(point)) return true;
+			}
 		}
 		return false;
 	}
-	
+
 	public Button getClickedButton(MousePoint point){
 		for(int i=guiElements.size()-1; i>=0; i--){
 			GuiElement ge = guiElements.get(i);
@@ -48,15 +51,15 @@ public class Container {
 		}
 		return null;
 	}
-	
-	public Boolean isAnyTextFieldIsSelected(){
+
+	public Boolean isAnyTextFieldSelected(){
 		for(int i=guiElements.size()-1; i>=0; i--){
 			GuiElement b = guiElements.get(i);
 			if(b instanceof TextField && ((TextField) b).isSelected() && b.getVisible())return true;
 		}
 		return false;
 	}
-	
+
 	public TextField getSelectedTextField(){
 		for(int i=guiElements.size()-1; i>=0; i--){
 			GuiElement b = guiElements.get(i);
@@ -64,11 +67,11 @@ public class Container {
 		}
 		return null;
 	}
-	
+
 	public void setVisible(Boolean visible){
 		this.visible = visible;
 	}
-	
+
 	public void show(){
 		visible = true;
 		Gui.Gui.repaintScreen();

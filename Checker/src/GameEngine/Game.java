@@ -2,12 +2,13 @@ package GameEngine;
 
 public class Game {
 	private GameType gameType;
-	private Player player1, player2;
+	private Player player1, player2, currentPlayer;
 	
 	public Game(GameType gameType, Player player1, Player player2) {
 		this.gameType = gameType;
 		this.player1 = player1;
 		this.player2 = player2;
+		currentPlayer = player1;
 	}
 
 	public void setGameType(GameType gameType) {
@@ -34,6 +35,14 @@ public class Game {
 		return player2;
 	}
 
+	public void changeCurrentPlayer(Player currentPlayer) {
+		this.currentPlayer = currentPlayer;
+	}
+	
+	public Player getCurrentPlayer() {
+		return currentPlayer;
+	}
+	
 	public enum GameType{
 		LOCAL, NETWORK;
 	}

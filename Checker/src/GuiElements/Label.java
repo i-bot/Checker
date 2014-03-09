@@ -28,7 +28,7 @@ public class Label extends GuiElement{
 	@Override
 	public void drawMe(Graphics g) {
 		if(visible){
-			for(int z = 0; z < computeLines().size() - 1; z++){
+			for(int z = 0; z < computeLines().size(); z++){
 				ArrayList<BufferedImage> chars = myChars.myChars.getMyChars(computeLines().get(z));
 				for(int i = 0; i < chars.size(); i++){
 					BufferedImage img = chars.get(i);
@@ -43,11 +43,11 @@ public class Label extends GuiElement{
 	protected ArrayList<String> computeLines(){
 		String[] segments = text.split(Pattern.quote(" "));
 		ArrayList<String> strings = new ArrayList<String>();
-		for(int y = 0, i = 0; y < height; y += Scaler.scale(30)){
+		for(int t_y = 0, i = 0; t_y < height; t_y += Scaler.scale(30)){
 			String s = "";
 			for(int x = 0; i<segments.length; i++){
 				x+=(segments[i].length()+1)*Scaler.scale(15);
-				if(!(x<=(width+15))){
+				if(!(x<=(width+Scaler.scale(15)))){
 					break;
 				}
 				s+=segments[i]+" ";
