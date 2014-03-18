@@ -7,17 +7,13 @@ public class RealPlayer extends Player{
 
 	private Piece selectedPiece;
 	private Move currentMove;
-	private ArrayList<Move> movesWithJumps;
+	private Boolean canChangeSelectedPiece;
 
 	public RealPlayer(String name, Color color_player) {
 		super(color_player);
 		this.name = name;
 		
 		clear();
-	}
-
-	public void setMovesWithJumps(ArrayList<Move> movesWithJumps){
-		this.movesWithJumps = movesWithJumps;
 	}
 	
 	public void handleSelecetedPiece(Piece selectedPiece){
@@ -49,18 +45,24 @@ public class RealPlayer extends Player{
 		return selectedPiece != null;
 	}
 	
+	public Boolean canChangeSelectedPiece(){
+		return canChangeSelectedPiece;
+	}
+	
+	public void setSelectedPieceForMultipleJumps(Piece piece){
+		selectedPiece = piece;
+		piece.setSelected(true);
+		canChangeSelectedPiece = false;
+	}
+	
 	public void unselectPiece(){
 		selectedPiece = null;
+		canChangeSelectedPiece = true;
 	}
 	
 	public void clear(){
 		unselectPiece();
 		currentMove = null;
 		movesWithJumps = new ArrayList<>();
-	}
-
-	@Override
-	public String getName() {
-		return name;
 	}
 }

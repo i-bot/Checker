@@ -69,7 +69,6 @@ public class Gui extends JFrame{
 	}
 	
 	private static void draw(Graphics g){
-		System.out.println("Gui.draw()");
 		if(!hasLoaded)g.drawImage(background, 0, 0, null);
 		else Engine.MenuHandler.drawMe(g);
 	}

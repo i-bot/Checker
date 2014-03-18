@@ -4,7 +4,11 @@ menu_background:
 /Graphics/menu_background/Menu_Background_Game.png
 game_images:
 /Graphics/game_images/Default_Board.png
-/Graphics/game_images/Piece_Light.png
-/Graphics/game_images/Piece_Dark.png
-/Graphics/game_images/Piece_Light_Selected.png
-/Graphics/game_images/Piece_Dark_Selected.png
+/Graphics/game_images/Piece_Light_Man.png
+/Graphics/game_images/Piece_Dark_Man.png
+/Graphics/game_images/Piece_Light_Man_Selected.png
+/Graphics/game_images/Piece_Dark_Man_Selected.png
+/Graphics/game_images/Piece_Light_King.png
+/Graphics/game_images/Piece_Dark_King.png
+/Graphics/game_images/Piece_Light_King_Selected.png
+/Graphics/game_images/Piece_Dark_King_Selected.png

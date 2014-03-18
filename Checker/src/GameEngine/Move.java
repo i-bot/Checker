@@ -20,6 +20,10 @@ public class Move {
 		this.destinationPoints = destinationPoints;
 	}
 	
+	public void addDestinationPoint(Point destinationPoint){
+		destinationPoints.add(destinationPoint);
+	}
+	
 	public Piece getSelectedPiece(){
 		return selectedPiece;
 	}
@@ -30,5 +34,16 @@ public class Move {
 	
 	public Boolean equals(Move m){
 		return (selectedPiece == m.getSelectedPiece() && destinationPoints.equals(m.getDestinationPoints()));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Move clone(){
+		return new Move(selectedPiece.clone(), (ArrayList<Point>) destinationPoints.clone());
+	}
+	
+	public String toString(){
+		String s = selectedPiece.getPosition().toString();
+		for(Point p : destinationPoints)s += " -> " + p.toString();
+		return s;
 	}
 }
