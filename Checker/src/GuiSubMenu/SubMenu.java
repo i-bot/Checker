@@ -70,7 +70,10 @@ public abstract class SubMenu{
 			GuiElement b = guiElements.get(i);
 			if(b instanceof Button && ((Button) b).isClicked(point) && b.getVisible())return (Button) b;
 			if(b instanceof TextField && ((TextField) b).isClicked(point) && b.getVisible()){
-				((TextField) b).setSelected(true);
+				if(!((TextField) b).isSelected())
+					((TextField) b).setSelected(true);
+				else 
+					((TextField) b).setSelected(false);
 				((TextField) b).repaint();
 				return null;
 			}
@@ -88,6 +91,7 @@ public abstract class SubMenu{
 		return false;
 	}
 	
+	@SuppressWarnings("unused")
 	public TextField getSelectedTextField(){
 		for(int i = containers.size()-1; i >= 0; i--) return containers.get(i).getSelectedTextField();
 		for(int i = guiElements.size()-1; i >= 0; i--){

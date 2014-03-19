@@ -146,7 +146,7 @@ public class CheckerBoard {
 	public void executeTestMove(Point start, Point end){
 		Rule currentRule = GameEngine.getCurrentRule();
 		Move m = new Move(pieces[start.x][start.y], end);
-	
+
 		if(currentRule.checkMove(GameEngine.getCurrentPlayer(), m)){
 			pieces[m.getSelectedPiece().getX()][m.getSelectedPiece().getY()] = null;
 
@@ -179,12 +179,25 @@ public class CheckerBoard {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public CheckerBoard clone(){
+		ArrayList<Piece> clonedPiecesOnBoard = new ArrayList<>();
+		for(Piece p : piecesOnBoard)
+			clonedPiecesOnBoard.add((p == null)? null : (Piece) p.clone());
+		
+		ArrayList<Piece> clonedLightCapturedPieces = new ArrayList<>();
+		for(Piece p : lightCapturedPieces)
+			clonedLightCapturedPieces.add((p == null)? null : (Piece) p.clone());
+		
+		ArrayList<Piece> clonedDarkCapturedPieces = new ArrayList<>();
+		for(Piece p : darkCapturedPieces)
+			clonedDarkCapturedPieces.add((p == null)? null : (Piece) p.clone());
+		
 		Piece[][] t_pieces = new Piece[pieces.length][pieces[0].length];
 		for(int x = 0; x < pieces.length; x++)
-			for(int y = 0; y < pieces[x].length; y++)
+			for(int y = 0; y < pieces[x].length; y++){
 				t_pieces[x][y] = (pieces[x][y] != null)? pieces[x][y].clone() : null;
-				return new CheckerBoard(t_pieces, (ArrayList<Piece>) piecesOnBoard.clone(), (ArrayList<Piece>) lightCapturedPieces.clone(), (ArrayList<Piece>) darkCapturedPieces.clone());
+			}
+
+		return new CheckerBoard(t_pieces, clonedPiecesOnBoard, clonedLightCapturedPieces, clonedDarkCapturedPieces);
 	}
 }

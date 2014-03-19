@@ -14,69 +14,69 @@ public abstract class Menu{
 	private ArrayList<TextFieldListener> textFieldListeners = new ArrayList<TextFieldListener>();
 	private ArrayList<SubMenu> subMenus = new ArrayList<SubMenu>();
 	private ArrayList<Container> containers = new ArrayList<Container>();
-	
+
 	public abstract void createNonStaticContainersAndSubMenus();
-	
+
 	public void add(GuiElement ge){
 		guiElements.add(ge);
 	}
-	
+
 	public void add(SubMenu sm){
 		subMenus.add(sm);
 	}
-	
+
 	public void add(Container c){
 		containers.add(c);
 	}
-	
+
 	public void deleteAllGuiElements(){
 		guiElements = new ArrayList<GuiElement>();
 	}
-	
+
 	public void deleteAllButtonListeners(){
 		buttonListeners = new ArrayList<ButtonListener>();
 	}
-	
+
 	public void deleteAllSubMenus(){
 		subMenus = new ArrayList<SubMenu>();
 	}
-	
+
 	public void deleteAllContainers(){
 		containers = new ArrayList<Container>();
 	}
-	
+
 	public void repaint(){
 		MenuHandler.changeMenu(MenuHandler.getShownMenu());
 	}
-	
+
 	public void drawMe(Graphics g){
 		for(int i=0; i<guiElements.size(); i++)guiElements.get(i).drawMe(g);
 		for(int i=0; i<containers.size(); i++)containers.get(i).drawMe(g);
 		for(int i=0; i<subMenus.size(); i++)subMenus.get(i).drawMe(g);
 	}
-	
+
 	public void addButtonListener(ButtonListener bl){
 		buttonListeners.add(bl);
 	}
-	
+
 	public void addTextFieldListener(TextFieldListener tfl){
 		textFieldListeners.add(tfl);
 	}
-	
+
 	public ArrayList<ButtonListener> getButtonListeners(){
 		ArrayList<ButtonListener> bl = new ArrayList<ButtonListener>();
 		bl.addAll(buttonListeners);
 		for(SubMenu sm : subMenus)bl.addAll(sm.getButtonListeners());
 		return bl;
 	}
-	
+
 	public ArrayList<TextFieldListener> getTextFieldListeners(){
 		ArrayList<TextFieldListener> tfl = new ArrayList<TextFieldListener>();
 		tfl.addAll(textFieldListeners);
 		for(SubMenu sm : subMenus)tfl.addAll(sm.getTextFieldListeners());
 		return tfl;
 	}
-	
+
 	public Button getClickedButton(MousePoint point){
 		for(int i=subMenus.size()-1; i>=0; i--)if(subMenus.get(i).isClicked(point))return subMenus.get(i).getClickedButton(point);
 		for(int i=containers.size()-1; i>=0; i--)if(containers.get(i).isClicked(point))return containers.get(i).getClickedButton(point);
@@ -84,7 +84,10 @@ public abstract class Menu{
 			GuiElement b = guiElements.get(i);
 			if(b instanceof Button && ((Button) b).isClicked(point) && b.getVisible())return (Button) b;
 			if(b instanceof TextField && ((TextField) b).isClicked(point) && b.getVisible()){
-				((TextField) b).setSelected(true);
+				if(!((TextField) b).isSelected())
+					((TextField) b).setSelected(true);
+				else 
+					((TextField) b).setSelected(false);
 				((TextField) b).repaint();
 				return null;
 			}
@@ -92,7 +95,7 @@ public abstract class Menu{
 		}
 		return null;
 	}
-	
+
 	public TextField getSelectedTextField(){
 		for(int i=subMenus.size()-1; i>=0; i--)if(subMenus.get(i).isAnyTextFieldSelected())return subMenus.get(i).getSelectedTextField();
 		for(int i=containers.size()-1; i>=0; i--)if(containers.get(i).isAnyTextFieldSelected()  && containers.get(i).visible)return containers.get(i).getSelectedTextField();

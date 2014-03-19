@@ -33,12 +33,14 @@ public class Move {
 	}
 	
 	public Boolean equals(Move m){
-		return (selectedPiece == m.getSelectedPiece() && destinationPoints.equals(m.getDestinationPoints()));
+		return (selectedPiece.equals(m.getSelectedPiece()) && destinationPoints.equals(m.getDestinationPoints()));
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Move clone(){
-		return new Move(selectedPiece.clone(), (ArrayList<Point>) destinationPoints.clone());
+		ArrayList<Point> clonedDestinationPoints = new ArrayList<>();
+		for(Point p : destinationPoints)
+			clonedDestinationPoints.add((p == null)? null : (Point) p.clone());
+		return new Move(selectedPiece.clone(), clonedDestinationPoints);
 	}
 	
 	public String toString(){

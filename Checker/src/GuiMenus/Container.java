@@ -43,7 +43,10 @@ public class Container {
 			GuiElement ge = guiElements.get(i);
 			if(ge instanceof Button && ((Button) ge).isClicked(point) && ge.getVisible())return (Button) ge;
 			if(ge instanceof TextField && ((TextField) ge).isClicked(point) && ge.getVisible()){
-				((TextField) ge).setSelected(true);
+				if(!((TextField) ge).isSelected())
+					((TextField) ge).setSelected(true);
+				else 
+					((TextField) ge).setSelected(false);
 				((TextField) ge).repaint();
 				return null;
 			}

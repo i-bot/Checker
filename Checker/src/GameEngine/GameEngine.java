@@ -50,7 +50,7 @@ public class GameEngine {
 					currentPlayer.clear();
 					if(rule.canJump(currentMove.getSelectedPiece()) && !normalMove){
 						currentPlayer.setSelectedPieceForMultipleJumps(currentMove.getSelectedPiece());
-						//compute Moves With Jump for the selected Piece for current Player
+						currentPlayer.setMovesWithJumps(rule.getMovesWithJumps(currentMove.getSelectedPiece()));
 					}
 					else {
 						changePlayer(currentPlayer);
