@@ -164,25 +164,22 @@ public class DefaultRule extends Rule{
 			}
 		}
 		else if(piece.getPieceType() == Piece.PieceType.KING){
-			if(piece.getPieceColor() == Color.LIGHT){
-				for(Point t_p = new Point(piece.getX() + 2, piece.getY() + 2); t_p.x < 8 && t_p.y < 8; t_p.x++, t_p.y++)
-					if(isJump_King(piece.getPosition(), t_p))
-						return true;
+			for(Point t_p = new Point(piece.getX() + 2, piece.getY() + 2); t_p.x < 8 && t_p.y < 8; t_p.x++, t_p.y++)
+				if(isJump_King(piece.getPosition(), t_p))
+					return true;
 
-				for(Point t_p = new Point(piece.getX() - 2, piece.getY() + 2); t_p.x >= 0 && t_p.y < 8; t_p.x--, t_p.y++)
-					if(isJump_King(piece.getPosition(), t_p))
-						return true;
+			for(Point t_p = new Point(piece.getX() - 2, piece.getY() + 2); t_p.x >= 0 && t_p.y < 8; t_p.x--, t_p.y++)
+				if(isJump_King(piece.getPosition(), t_p))
+					return true;
 
 
-				for(Point t_p = new Point(piece.getX() + 2, piece.getY() - 2); t_p.x < 8 && t_p.y >= 0; t_p.x++, t_p.y--)
-					if(isJump_King(piece.getPosition(), t_p))
-						return true;
+			for(Point t_p = new Point(piece.getX() + 2, piece.getY() - 2); t_p.x < 8 && t_p.y >= 0; t_p.x++, t_p.y--)
+				if(isJump_King(piece.getPosition(), t_p))
+					return true;
 
-				for(Point t_p = new Point(piece.getX() - 2, piece.getY() - 2); t_p.x >= 0 && t_p.y >= 0; t_p.x--, t_p.y--)
-					if(isJump_King(piece.getPosition(), t_p))
-						return true;
-
-			}
+			for(Point t_p = new Point(piece.getX() - 2, piece.getY() - 2); t_p.x >= 0 && t_p.y >= 0; t_p.x--, t_p.y--)
+				if(isJump_King(piece.getPosition(), t_p))
+					return true;
 		}
 
 		return false;
@@ -214,9 +211,9 @@ public class DefaultRule extends Rule{
 			}
 			if(m.getSelectedPiece().getPieceType() == Piece.PieceType.KING){
 				if(!isJump_King(lastPosition, m.getDestinationPoints().get(i)))
-					return false;
-				lastPosition = m.getDestinationPoints().get(i);
+					return false;	
 			}
+			lastPosition = m.getDestinationPoints().get(i);
 		}
 
 		return true;
@@ -301,10 +298,15 @@ public class DefaultRule extends Rule{
 			int t_y = (endPosition.y - startPosition.y) / Math.abs(endPosition.y - startPosition.y);
 			Point p_enemy = new Point(endPosition.x - t_x, endPosition.y - t_y);
 			Boolean correctJump = true;
-			if(endPosition.x >= 0 && endPosition.x < 8 && endPosition.y >= 0 && endPosition.y < 8 && Math.abs(endPosition.x - startPosition.x) == Math.abs(endPosition.y - startPosition.y) && currentCheckerBoard.getPiece(endPosition) == null && currentCheckerBoard.getPiece(p_enemy) != null && currentCheckerBoard.getPiece(p_enemy).getPieceColor() == Color.DARK)
-				for(int i = 1; correctJump && !p_enemy.equals(new Point(startPosition.x + i * t_x, startPosition.y + i * t_y)); i++)
-					correctJump = currentCheckerBoard.getPiece(startPosition.x + i * t_x, startPosition.y + i * t_y) == null;
+			if(currentCheckerBoard.getPiece(endPosition) == null && currentCheckerBoard.getPiece(p_enemy) != null){
+				Color c_enemy = (currentCheckerBoard.getPiece(p_enemy.getLocation()).getPieceColor() == Color.LIGHT)? Color.LIGHT : Color.DARK;
+				if(endPosition.x >= 0 && endPosition.x < 8 && endPosition.y >= 0 && endPosition.y < 8 && Math.abs(endPosition.x - startPosition.x) == Math.abs(endPosition.y - startPosition.y) && currentCheckerBoard.getPiece(p_enemy).getPieceColor() == c_enemy)
+					for(int i = 1; correctJump && !p_enemy.equals(new Point(startPosition.x + i * t_x, startPosition.y + i * t_y)); i++)
+						correctJump = currentCheckerBoard.getPiece(startPosition.x + i * t_x, startPosition.y + i * t_y) == null;
+				else correctJump = false;
+			}
 			else correctJump = false;
+			
 			return correctJump;
 		}
 		else return false;
@@ -324,4 +326,3 @@ public class DefaultRule extends Rule{
 		else return false;
 	}
 }
-

@@ -39,8 +39,6 @@ public class GameMenu extends Menu{
 
 		@Override
 		public void clicked(Button button){
-
-			System.out.println("GameMenu.GameButtonListener.clicked()" + button);
 			if(button instanceof NormalButton){			
 				MenuHandler.changeMenu(button.getID());
 			}

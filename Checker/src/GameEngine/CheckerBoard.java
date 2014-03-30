@@ -34,7 +34,7 @@ public class CheckerBoard {
 
 		piecesOnBoard = convertPiecesToArray();
 		lightCapturedPieces = new ArrayList<>();
-		darkCapturedPieces  = new ArrayList<>();
+		darkCapturedPieces = new ArrayList<>();
 	}
 
 	private CheckerBoard(Piece[][] pieces, ArrayList<Piece> piecesOnBoard, ArrayList<Piece> lightCapturedPieces, ArrayList<Piece> darkCapturedPieces){
@@ -82,6 +82,21 @@ public class CheckerBoard {
 	public Boolean executeMove(Move m){
 		Rule currentRule = GameEngine.getCurrentRule();
 
+		if(!GameEngine.getCurrentPlayer().containsMove(m)){
+			Piece pieceToRemove = GameEngine.getCurrentPlayer().getMoveForRemovingPiece().getSelectedPiece();
+			pieces[pieceToRemove.getX()][pieceToRemove.getY()] = null;
+			if(pieceToRemove.getPieceColor() == Color.LIGHT)
+				darkCapturedPieces.add(pieceToRemove);
+			if(pieceToRemove.getPieceColor() == Color.DARK)
+				lightCapturedPieces.add(pieceToRemove);
+			updatePiecesOnBoard();
+			currentRule.updateCurrentCheckerBoard();
+			
+			if(pieceToRemove.equals(m.getSelectedPiece()))
+				return true;
+		}
+
+		
 		if(currentRule.checkMove(GameEngine.getCurrentPlayer(), m)){
 			pieces[m.getSelectedPiece().getX()][m.getSelectedPiece().getY()] = null;
 
@@ -94,7 +109,7 @@ public class CheckerBoard {
 					if(p.getPieceColor() == Color.LIGHT)
 						lightCapturedPieces.add(capturedPiece);
 					if(p.getPieceColor() == Color.DARK)
-						lightCapturedPieces.add(capturedPiece);
+						darkCapturedPieces.add(capturedPiece);
 					pieces[capturedPiece.getX()][capturedPiece.getY()] = null;
 				}
 
@@ -114,15 +129,8 @@ public class CheckerBoard {
 					Gui.Gui.repaintScreen();
 				}
 			}
-
 			m.getSelectedPiece().setSelected(false);
 
-			if(!GameEngine.getCurrentPlayer().containsMove(m)){
-				Piece pieceToRemove = GameEngine.getCurrentPlayer().getMoveForRemovingPiece().getSelectedPiece();
-				pieces[pieceToRemove.getX()][pieceToRemove.getY()] = null;
-				updatePiecesOnBoard();
-				currentRule.updateCurrentCheckerBoard();
-			}
 			if(m.getSelectedPiece().getPieceColor() == Color.LIGHT && m.getSelectedPiece().getY() == 7){
 				m.getSelectedPiece().makeToKing();
 				updatePiecesOnBoard();
@@ -159,7 +167,7 @@ public class CheckerBoard {
 					if(p.getPieceColor() == Color.LIGHT)
 						lightCapturedPieces.add(capturedPiece);
 					if(p.getPieceColor() == Color.DARK)
-						lightCapturedPieces.add(capturedPiece);
+						darkCapturedPieces.add(capturedPiece);
 					pieces[capturedPiece.getX()][capturedPiece.getY()] = null;
 				}
 
@@ -183,15 +191,15 @@ public class CheckerBoard {
 		ArrayList<Piece> clonedPiecesOnBoard = new ArrayList<>();
 		for(Piece p : piecesOnBoard)
 			clonedPiecesOnBoard.add((p == null)? null : (Piece) p.clone());
-		
+
 		ArrayList<Piece> clonedLightCapturedPieces = new ArrayList<>();
 		for(Piece p : lightCapturedPieces)
 			clonedLightCapturedPieces.add((p == null)? null : (Piece) p.clone());
-		
+
 		ArrayList<Piece> clonedDarkCapturedPieces = new ArrayList<>();
 		for(Piece p : darkCapturedPieces)
 			clonedDarkCapturedPieces.add((p == null)? null : (Piece) p.clone());
-		
+
 		Piece[][] t_pieces = new Piece[pieces.length][pieces[0].length];
 		for(int x = 0; x < pieces.length; x++)
 			for(int y = 0; y < pieces[x].length; y++){

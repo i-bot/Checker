@@ -12,3 +12,4 @@ game_images:
 /Graphics/game_images/Piece_Dark_King.png
 /Graphics/game_images/Piece_Light_King_Selected.png
 /Graphics/game_images/Piece_Dark_King_Selected.png
+/Graphics/game_images/Piece_Captured_Background_8x8.png
