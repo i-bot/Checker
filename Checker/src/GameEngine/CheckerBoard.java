@@ -81,23 +81,24 @@ public class CheckerBoard {
 
 	public Boolean executeMove(Move m){
 		Rule currentRule = GameEngine.getCurrentRule();
-
-		if(!GameEngine.getCurrentPlayer().containsMove(m)){
-			Piece pieceToRemove = GameEngine.getCurrentPlayer().getMoveForRemovingPiece().getSelectedPiece();
-			pieces[pieceToRemove.getX()][pieceToRemove.getY()] = null;
-			if(pieceToRemove.getPieceColor() == Color.LIGHT)
-				darkCapturedPieces.add(pieceToRemove);
-			if(pieceToRemove.getPieceColor() == Color.DARK)
-				lightCapturedPieces.add(pieceToRemove);
-			updatePiecesOnBoard();
-			currentRule.updateCurrentCheckerBoard();
-			
-			if(pieceToRemove.equals(m.getSelectedPiece()))
-				return true;
-		}
-
 		
 		if(currentRule.checkMove(GameEngine.getCurrentPlayer(), m)){
+			m.getSelectedPiece().setSelected(false);
+			
+			if(!GameEngine.getCurrentPlayer().containsMove(m)){
+				Piece pieceToRemove = GameEngine.getCurrentPlayer().getMoveForRemovingPiece().getSelectedPiece();
+				pieces[pieceToRemove.getX()][pieceToRemove.getY()] = null;
+				if(pieceToRemove.getPieceColor() == Color.LIGHT)
+					darkCapturedPieces.add(pieceToRemove);
+				if(pieceToRemove.getPieceColor() == Color.DARK)
+					lightCapturedPieces.add(pieceToRemove);
+				updatePiecesOnBoard();
+				currentRule.updateCurrentCheckerBoard();
+				
+				if(pieceToRemove.equals(m.getSelectedPiece()))
+					return true;
+			}
+			
 			pieces[m.getSelectedPiece().getX()][m.getSelectedPiece().getY()] = null;
 
 			Piece p = m.getSelectedPiece();
@@ -129,8 +130,7 @@ public class CheckerBoard {
 					Gui.Gui.repaintScreen();
 				}
 			}
-			m.getSelectedPiece().setSelected(false);
-
+			
 			if(m.getSelectedPiece().getPieceColor() == Color.LIGHT && m.getSelectedPiece().getY() == 7){
 				m.getSelectedPiece().makeToKing();
 				updatePiecesOnBoard();

@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import GameEngine.*;
+import GameEngine.Piece.PieceType;
 
 public class DefaultRule extends Rule{
 
@@ -40,6 +41,7 @@ public class DefaultRule extends Rule{
 
 	private ArrayList<Move> computeMovesWithJumps_Light_Man(Piece currentPiece, Point currentPosition, ArrayList<Point> destinationPoints){
 		ArrayList<Move> movesWithJumps = new ArrayList<>();
+		CheckerBoard t_board = currentCheckerBoard.clone();
 
 		@SuppressWarnings("unchecked")
 		ArrayList<Point> destinationPointsForRightJumping = (ArrayList<Point>) destinationPoints.clone();
@@ -47,8 +49,10 @@ public class DefaultRule extends Rule{
 		if(isJump_Light_Man(currentPosition, t_point_right)){
 			destinationPointsForRightJumping.add(t_point_right);
 			movesWithJumps.add(new Move(currentPiece, destinationPointsForRightJumping));
-			movesWithJumps.addAll(computeMovesWithJumps_Light_Man(currentPiece, t_point_right, destinationPointsForRightJumping));
+			currentCheckerBoard.executeTestMove((destinationPoints.size() == 0)? currentPiece.getPosition() : destinationPoints.get(destinationPoints.size() - 1), t_point_right);
+			movesWithJumps.addAll((currentCheckerBoard.getPiece(t_point_right).getPieceType() == PieceType.KING)? computeMovesWithJumps_King(currentPiece, t_point_right, destinationPointsForRightJumping) : computeMovesWithJumps_Light_Man(currentPiece, t_point_right, destinationPointsForRightJumping));
 		}
+		currentCheckerBoard = t_board.clone();
 
 		@SuppressWarnings("unchecked")
 		ArrayList<Point> destinationPointsForLeftJumping = (ArrayList<Point>) destinationPoints.clone();
@@ -56,8 +60,10 @@ public class DefaultRule extends Rule{
 		if(isJump_Light_Man(currentPosition, t_point_left)){
 			destinationPointsForLeftJumping.add(t_point_left);
 			movesWithJumps.add(new Move(currentPiece, destinationPointsForLeftJumping));
-			movesWithJumps.addAll(computeMovesWithJumps_Light_Man(currentPiece, t_point_left, destinationPointsForLeftJumping));
+			currentCheckerBoard.executeTestMove((destinationPoints.size() == 0)? currentPiece.getPosition() : destinationPoints.get(destinationPoints.size() - 1), t_point_left);
+			movesWithJumps.addAll((currentCheckerBoard.getPiece(t_point_left).getPieceType() == PieceType.KING)? computeMovesWithJumps_King(currentPiece, t_point_left, destinationPointsForLeftJumping) : computeMovesWithJumps_Light_Man(currentPiece, t_point_left, destinationPointsForLeftJumping));
 		}
+		currentCheckerBoard = t_board.clone();
 
 		return movesWithJumps;
 	}
@@ -120,15 +126,18 @@ public class DefaultRule extends Rule{
 
 	private ArrayList<Move> computeMovesWithJumps_Dark_Man(Piece currentPiece, Point currentPosition, ArrayList<Point> destinationPoints){
 		ArrayList<Move> movesWithJumps = new ArrayList<>();
-
+		CheckerBoard t_board = currentCheckerBoard.clone();
+		
 		@SuppressWarnings("unchecked")
 		ArrayList<Point> destinationPointsForRightJumping = (ArrayList<Point>) destinationPoints.clone();
 		Point t_point_right = new Point(currentPosition.x + 2, currentPosition.y - 2);
 		if(isJump_Dark_Man(currentPosition, t_point_right)){
 			destinationPointsForRightJumping.add(t_point_right);
 			movesWithJumps.add(new Move(currentPiece, destinationPointsForRightJumping));
-			movesWithJumps.addAll(computeMovesWithJumps_Dark_Man(currentPiece, t_point_right, destinationPointsForRightJumping));
+			currentCheckerBoard.executeTestMove((destinationPoints.size() == 0)? currentPiece.getPosition() : destinationPoints.get(destinationPoints.size() - 1), t_point_right);
+			movesWithJumps.addAll((currentCheckerBoard.getPiece(t_point_right).getPieceType() == PieceType.KING)? computeMovesWithJumps_King(currentPiece, t_point_right, destinationPointsForRightJumping) : computeMovesWithJumps_Dark_Man(currentPiece, t_point_right, destinationPointsForRightJumping));
 		}
+		currentCheckerBoard = t_board.clone();
 
 		@SuppressWarnings("unchecked")
 		ArrayList<Point> destinationPointsForLeftJumping = (ArrayList<Point>) destinationPoints.clone();
@@ -136,8 +145,10 @@ public class DefaultRule extends Rule{
 		if(isJump_Dark_Man(currentPosition, t_point_left)){
 			destinationPointsForLeftJumping.add(t_point_left);
 			movesWithJumps.add(new Move(currentPiece, destinationPointsForLeftJumping));
-			movesWithJumps.addAll(computeMovesWithJumps_Dark_Man(currentPiece, t_point_left, destinationPointsForLeftJumping));
+			currentCheckerBoard.executeTestMove((destinationPoints.size() == 0)? currentPiece.getPosition() : destinationPoints.get(destinationPoints.size() - 1), t_point_left);
+			movesWithJumps.addAll((currentCheckerBoard.getPiece(t_point_left).getPieceType() == PieceType.KING)? computeMovesWithJumps_King(currentPiece, t_point_left, destinationPointsForLeftJumping) : computeMovesWithJumps_Dark_Man(currentPiece, t_point_left, destinationPointsForLeftJumping));
 		}
+		currentCheckerBoard = t_board.clone();
 
 		return movesWithJumps;
 	}
@@ -313,7 +324,7 @@ public class DefaultRule extends Rule{
 	}
 
 	public Boolean isNormalMove_King(Point startPosition, Point endPosition){
-		if(Math.abs(endPosition.x - startPosition.x) >= 2 && Math.abs(endPosition.y - startPosition.y) >= 2){
+		if(Math.abs(endPosition.x - startPosition.x) >= 1 && Math.abs(endPosition.y - startPosition.y) >= 1){
 			int t_x = (endPosition.x - startPosition.x) / Math.abs(endPosition.x - startPosition.x);
 			int t_y = (endPosition.y - startPosition.y) / Math.abs(endPosition.y - startPosition.y);
 			Boolean correctNormalMove = true;
