@@ -28,7 +28,8 @@ public class LocalGameMenu extends Menu{
 
 		add(new NormalButton(3, Languages.getButtonAndMenuTitle(3), TitleOrientation.MID, 35, 35, 270, 50, 255, 255, 0));
 
-		add(new NormalButton(4, Languages.getButtonAndMenuTitle(4), TitleOrientation.MID, 35, 425, 270, 50, 255, 255, 0));
+		add(new NormalButton(4, Languages.getButtonAndMenuTitle(4), TitleOrientation.MID, 35, 360, 270, 50, 255, 255, 0));
+		add(new NormalButton(5, Languages.getButtonAndMenuTitle(5), TitleOrientation.MID, 35, 425, 270, 50, 255, 255, 0));
 
 		add(new NormalButton(1, Languages.getButtonAndMenuTitle(1), TitleOrientation.MID, 35, 750, 270, 50, 255, 255, 0));
 		add(new NormalButton(0, Languages.getButtonAndMenuTitle(0), TitleOrientation.MID, 35, 815, 270, 50, 255, 255, 0));

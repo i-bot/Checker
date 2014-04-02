@@ -75,7 +75,7 @@ public class DefaultRule extends Rule{
 		@SuppressWarnings("unchecked")
 		ArrayList<Point> destinationPointsForRightDownJumping = (ArrayList<Point>) destinationPoints.clone();
 		for(Point t_p = new Point(currentPosition.x + 2, currentPosition.y + 2); t_p.x < 8 && t_p.y < 8; t_p.x++, t_p.y++)
-			if(isJump_King(currentPosition, t_p)){
+			if(isJump_King(currentPosition, t_p, currentPiece.getPieceColor())){
 				destinationPointsForRightDownJumping.add(t_p);
 				movesWithJumps.add(new Move(currentPiece, destinationPointsForRightDownJumping));
 				currentCheckerBoard.executeTestMove((destinationPoints.size() == 0)? currentPiece.getPosition() : destinationPoints.get(destinationPoints.size() - 1), t_p);
@@ -87,7 +87,7 @@ public class DefaultRule extends Rule{
 		@SuppressWarnings("unchecked")
 		ArrayList<Point> destinationPointsForLeftDownJumping = (ArrayList<Point>) destinationPoints.clone();
 		for(Point t_p = new Point(currentPosition.x - 2, currentPosition.y + 2); t_p.x >= 0 && t_p.y < 8; t_p.x--, t_p.y++)
-			if(isJump_King(currentPosition, t_p)){
+			if(isJump_King(currentPosition, t_p, currentPiece.getPieceColor())){
 				destinationPointsForLeftDownJumping.add(t_p);
 				movesWithJumps.add(new Move(currentPiece, destinationPointsForLeftDownJumping));
 				currentCheckerBoard.executeTestMove((destinationPoints.size() == 0)? currentPiece.getPosition() : destinationPoints.get(destinationPoints.size() - 1), t_p);
@@ -100,7 +100,7 @@ public class DefaultRule extends Rule{
 		@SuppressWarnings("unchecked")
 		ArrayList<Point> destinationPointsForRightUpJumping = (ArrayList<Point>) destinationPoints.clone();
 		for(Point t_p = new Point(currentPosition.x + 2, currentPosition.y - 2); t_p.x < 8 && t_p.y >= 0; t_p.x++, t_p.y--)
-			if(isJump_King(currentPosition, t_p)){
+			if(isJump_King(currentPosition, t_p, currentPiece.getPieceColor())){
 				destinationPointsForRightUpJumping.add(t_p);
 				movesWithJumps.add(new Move(currentPiece, destinationPointsForRightUpJumping));
 				currentCheckerBoard.executeTestMove((destinationPoints.size() == 0)? currentPiece.getPosition() : destinationPoints.get(destinationPoints.size() - 1), t_p);
@@ -112,7 +112,7 @@ public class DefaultRule extends Rule{
 		@SuppressWarnings("unchecked")
 		ArrayList<Point> destinationPointsForLeftUpJumping = (ArrayList<Point>) destinationPoints.clone();
 		for(Point t_p = new Point(currentPosition.x - 2, currentPosition.y - 2); t_p.x >= 0 && t_p.y >= 0; t_p.x--, t_p.y--)
-			if(isJump_King(currentPosition, t_p)){
+			if(isJump_King(currentPosition, t_p, currentPiece.getPieceColor())){
 				destinationPointsForLeftUpJumping.add(t_p);
 				movesWithJumps.add(new Move(currentPiece, destinationPointsForLeftUpJumping));
 				currentCheckerBoard.executeTestMove((destinationPoints.size() == 0)? currentPiece.getPosition() : destinationPoints.get(destinationPoints.size() - 1), t_p);
@@ -176,20 +176,20 @@ public class DefaultRule extends Rule{
 		}
 		else if(piece.getPieceType() == Piece.PieceType.KING){
 			for(Point t_p = new Point(piece.getX() + 2, piece.getY() + 2); t_p.x < 8 && t_p.y < 8; t_p.x++, t_p.y++)
-				if(isJump_King(piece.getPosition(), t_p))
+				if(isJump_King(piece.getPosition(), t_p, piece.getPieceColor()))
 					return true;
 
 			for(Point t_p = new Point(piece.getX() - 2, piece.getY() + 2); t_p.x >= 0 && t_p.y < 8; t_p.x--, t_p.y++)
-				if(isJump_King(piece.getPosition(), t_p))
+				if(isJump_King(piece.getPosition(), t_p, piece.getPieceColor()))
 					return true;
 
 
 			for(Point t_p = new Point(piece.getX() + 2, piece.getY() - 2); t_p.x < 8 && t_p.y >= 0; t_p.x++, t_p.y--)
-				if(isJump_King(piece.getPosition(), t_p))
+				if(isJump_King(piece.getPosition(), t_p, piece.getPieceColor()))
 					return true;
 
 			for(Point t_p = new Point(piece.getX() - 2, piece.getY() - 2); t_p.x >= 0 && t_p.y >= 0; t_p.x--, t_p.y--)
-				if(isJump_King(piece.getPosition(), t_p))
+				if(isJump_King(piece.getPosition(), t_p, piece.getPieceColor()))
 					return true;
 		}
 
@@ -221,7 +221,7 @@ public class DefaultRule extends Rule{
 					return false;
 			}
 			if(m.getSelectedPiece().getPieceType() == Piece.PieceType.KING){
-				if(!isJump_King(lastPosition, m.getDestinationPoints().get(i)))
+				if(!isJump_King(lastPosition, m.getDestinationPoints().get(i), m.getSelectedPiece().getPieceColor()))
 					return false;	
 			}
 			lastPosition = m.getDestinationPoints().get(i);
@@ -293,9 +293,9 @@ public class DefaultRule extends Rule{
 		for(int i = 0; i < m.getDestinationPoints().size(); i++){
 			if(Math.abs(lastPosition.x - m.getDestinationPoints().get(i).x) != Math.abs(lastPosition.y - m.getDestinationPoints().get(i).y))
 				return false;
-			else if(m.getDestinationPoints().size() > 1 && !isJump_King(lastPosition, m.getDestinationPoints().get(i)) && isNormalMove_King(lastPosition, m.getDestinationPoints().get(i)))
+			else if(m.getDestinationPoints().size() > 1 && !isJump_King(lastPosition, m.getDestinationPoints().get(i), m.getSelectedPiece().getPieceColor()) && isNormalMove_King(lastPosition, m.getDestinationPoints().get(i)))
 				return false;
-			else if(m.getDestinationPoints().size() == 1 && !isJump_King(lastPosition, m.getDestinationPoints().get(i)) && !isNormalMove_King(lastPosition, m.getDestinationPoints().get(i)))
+			else if(m.getDestinationPoints().size() == 1 && !isJump_King(lastPosition, m.getDestinationPoints().get(i), m.getSelectedPiece().getPieceColor()) && !isNormalMove_King(lastPosition, m.getDestinationPoints().get(i)))
 				return false;
 			else lastPosition = m.getDestinationPoints().get(i);
 		}
@@ -303,15 +303,14 @@ public class DefaultRule extends Rule{
 		return true;
 	}
 
-	public Boolean isJump_King(Point startPosition, Point endPosition){
+	public Boolean isJump_King(Point startPosition, Point endPosition, Color c_player){
 		if(Math.abs(endPosition.x - startPosition.x) >= 2 && Math.abs(endPosition.y - startPosition.y) >= 2){
 			int t_x = (endPosition.x - startPosition.x) / Math.abs(endPosition.x - startPosition.x);
 			int t_y = (endPosition.y - startPosition.y) / Math.abs(endPosition.y - startPosition.y);
 			Point p_enemy = new Point(endPosition.x - t_x, endPosition.y - t_y);
 			Boolean correctJump = true;
 			if(currentCheckerBoard.getPiece(endPosition) == null && currentCheckerBoard.getPiece(p_enemy) != null){
-				Color c_enemy = (currentCheckerBoard.getPiece(p_enemy.getLocation()).getPieceColor() == Color.LIGHT)? Color.LIGHT : Color.DARK;
-				if(endPosition.x >= 0 && endPosition.x < 8 && endPosition.y >= 0 && endPosition.y < 8 && Math.abs(endPosition.x - startPosition.x) == Math.abs(endPosition.y - startPosition.y) && currentCheckerBoard.getPiece(p_enemy).getPieceColor() == c_enemy)
+				if(endPosition.x >= 0 && endPosition.x < 8 && endPosition.y >= 0 && endPosition.y < 8 && Math.abs(endPosition.x - startPosition.x) == Math.abs(endPosition.y - startPosition.y) && currentCheckerBoard.getPiece(p_enemy).getPieceColor() != c_player)
 					for(int i = 1; correctJump && !p_enemy.equals(new Point(startPosition.x + i * t_x, startPosition.y + i * t_y)); i++)
 						correctJump = currentCheckerBoard.getPiece(startPosition.x + i * t_x, startPosition.y + i * t_y) == null;
 				else correctJump = false;

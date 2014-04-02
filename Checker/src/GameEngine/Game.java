@@ -45,6 +45,5 @@ public class Game {
 	
 	public enum GameType{
 		LOCAL, NETWORK;
-	}
-	
+	}	
 }

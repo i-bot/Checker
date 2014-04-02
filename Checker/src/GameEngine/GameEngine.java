@@ -17,6 +17,10 @@ public class GameEngine {
 		rule = new DefaultRule(checkerBoard);
 		changePlayer(game.getPlayer2());
 	}
+	
+	public static void restart(){
+		init(game);
+	}
 
 	public static Game getCurrentGame(){
 		return game;
