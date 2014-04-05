@@ -50,15 +50,8 @@ public class Gui extends JFrame{
 		bufferStrategy = canvas.getBufferStrategy();
 
 		repaintScreen();
-		
-		try {
-			Thread.sleep(10);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		repainterThread.start();
+		repaintScreen();
 	}
 	
 	public static void repaintScreen(){
