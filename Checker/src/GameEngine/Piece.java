@@ -89,6 +89,10 @@ public class Piece{
 		return cloned;
 	}
 
+	public String toString(){
+		return (position.toString() + "|" + pieceColor + "|" + pieceType);
+	}
+	
 	public enum PieceColor {
 		DARK, LIGHT;
 	}
