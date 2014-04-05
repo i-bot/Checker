@@ -8,8 +8,9 @@ import GuiElements.*;
 import KeyInput.MousePoint;
 
 public class Container {
-	ArrayList<GuiElement> guiElements = new ArrayList<GuiElement>();
-	Boolean visible = true;
+	private TextField selectedTextField;
+	private ArrayList<GuiElement> guiElements = new ArrayList<GuiElement>();
+	private Boolean visible = true;
 
 	public void add(GuiElement ge){
 		guiElements.add(ge);
@@ -35,18 +36,29 @@ public class Container {
 				if(ge instanceof Area<?> && ge.getVisible() && ((Area<?>) ge).isClicked(point)) return true;
 			}
 		}
+
+		if(selectedTextField != null){
+			selectedTextField.setSelected(false);
+			selectedTextField.repaint();
+			selectedTextField = null;
+		}
+
 		return false;
 	}
 
 	public Button getClickedButton(MousePoint point){
+		if(selectedTextField != null){
+			selectedTextField.setSelected(false);
+			selectedTextField.repaint();
+			selectedTextField = null;
+		}
+
 		for(int i=guiElements.size()-1; i>=0; i--){
 			GuiElement ge = guiElements.get(i);
 			if(ge instanceof Button && ((Button) ge).isClicked(point) && ge.getVisible())return (Button) ge;
 			if(ge instanceof TextField && ((TextField) ge).isClicked(point) && ge.getVisible()){
-				if(!((TextField) ge).isSelected())
-					((TextField) ge).setSelected(true);
-				else 
-					((TextField) ge).setSelected(false);
+				((TextField) ge).setSelected(true);
+				selectedTextField = ((TextField) ge);
 				((TextField) ge).repaint();
 				return null;
 			}
@@ -69,6 +81,10 @@ public class Container {
 			if(b instanceof TextField && ((TextField) b).isSelected() && b.getVisible())return (TextField) b;
 		}
 		return null;
+	}
+
+	public Boolean getVisible(){
+		return  visible;
 	}
 
 	public void setVisible(Boolean visible){

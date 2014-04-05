@@ -9,6 +9,7 @@ import GuiSubMenu.SubMenu;
 import KeyInput.MousePoint;
 
 public abstract class Menu{
+	private TextField selectedTextField;
 	private ArrayList<GuiElement> guiElements = new ArrayList<GuiElement>();
 	private ArrayList<ButtonListener> buttonListeners = new ArrayList<ButtonListener>();
 	private ArrayList<TextFieldListener> textFieldListeners = new ArrayList<TextFieldListener>();
@@ -78,16 +79,20 @@ public abstract class Menu{
 	}
 
 	public Button getClickedButton(MousePoint point){
+		if(selectedTextField != null){
+			selectedTextField.setSelected(false);
+			selectedTextField.repaint();
+			selectedTextField = null;
+		}
+
 		for(int i=subMenus.size()-1; i>=0; i--)if(subMenus.get(i).isClicked(point))return subMenus.get(i).getClickedButton(point);
 		for(int i=containers.size()-1; i>=0; i--)if(containers.get(i).isClicked(point))return containers.get(i).getClickedButton(point);
 		for(int i=guiElements.size()-1; i>=0; i--){
 			GuiElement b = guiElements.get(i);
 			if(b instanceof Button && ((Button) b).isClicked(point) && b.getVisible())return (Button) b;
 			if(b instanceof TextField && ((TextField) b).isClicked(point) && b.getVisible()){
-				if(!((TextField) b).isSelected())
-					((TextField) b).setSelected(true);
-				else 
-					((TextField) b).setSelected(false);
+				((TextField) b).setSelected(true);
+				selectedTextField = ((TextField) b);
 				((TextField) b).repaint();
 				return null;
 			}
@@ -98,7 +103,7 @@ public abstract class Menu{
 
 	public TextField getSelectedTextField(){
 		for(int i=subMenus.size()-1; i>=0; i--)if(subMenus.get(i).isAnyTextFieldSelected())return subMenus.get(i).getSelectedTextField();
-		for(int i=containers.size()-1; i>=0; i--)if(containers.get(i).isAnyTextFieldSelected()  && containers.get(i).visible)return containers.get(i).getSelectedTextField();
+		for(int i=containers.size()-1; i>=0; i--)if(containers.get(i).isAnyTextFieldSelected()  && containers.get(i).getVisible())return containers.get(i).getSelectedTextField();
 		for(int i=guiElements.size()-1; i>=0; i--){
 			GuiElement b = guiElements.get(i);
 			if(b instanceof TextField && ((TextField) b).isSelected() && b.getVisible())return (TextField) b;
