@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import GameEngine.*;
+import GameEngine.Piece.PieceType;
 
 public class DefaultRule extends Rule{
 
@@ -31,58 +32,69 @@ public class DefaultRule extends Rule{
 		ArrayList<Move> movesWithJumps = new ArrayList<>();
 		CheckerBoard t_board = currentCheckerBoard.clone();
 
-		@SuppressWarnings("unchecked")
-		ArrayList<Point> destinationPointsForRightDownJumping = (ArrayList<Point>) destinationPoints.clone();
-		for(Point t_p = new Point(currentPosition.x + 2, currentPosition.y + 2); t_p.x < 8 && t_p.y < 8; t_p.x++, t_p.y++)
-			if(isJump(new Move((destinationPoints.size() == 0)? currentPiece : currentCheckerBoard.getPiece(destinationPoints.get(destinationPoints.size() - 1)), t_p))){
-				destinationPointsForRightDownJumping.add(t_p);
-				movesWithJumps.add(new Move(currentPiece, destinationPointsForRightDownJumping));
-				currentCheckerBoard.executeTestMove((destinationPoints.size() == 0)? currentPiece.getPosition() : destinationPoints.get(destinationPoints.size() - 1), t_p);
-				movesWithJumps.addAll(computeMovesWithJumps(currentPiece, t_p, destinationPointsForRightDownJumping));
-				break;
-			}
-		currentCheckerBoard = t_board.clone();
-
-		@SuppressWarnings("unchecked")
-		ArrayList<Point> destinationPointsForLeftDownJumping = (ArrayList<Point>) destinationPoints.clone();
-		for(Point t_p = new Point(currentPosition.x - 2, currentPosition.y + 2); t_p.x >= 0 && t_p.y < 8; t_p.x--, t_p.y++)
-			if(isJump(new Move((destinationPoints.size() == 0)? currentPiece : currentCheckerBoard.getPiece(destinationPoints.get(destinationPoints.size() - 1)), t_p))){
-				destinationPointsForLeftDownJumping.add(t_p);
-				movesWithJumps.add(new Move(currentPiece, destinationPointsForLeftDownJumping));
-				currentCheckerBoard.executeTestMove((destinationPoints.size() == 0)? currentPiece.getPosition() : destinationPoints.get(destinationPoints.size() - 1), t_p);
-				movesWithJumps.addAll(computeMovesWithJumps(currentPiece, t_p, destinationPointsForLeftDownJumping));
-				System.out.println("DefaultRule.computeMovesWithJumps_King()2" +movesWithJumps.size());
-				break;
-			}
-		currentCheckerBoard = t_board.clone();
-
-
-		@SuppressWarnings("unchecked")
-		ArrayList<Point> destinationPointsForRightUpJumping = (ArrayList<Point>) destinationPoints.clone();
-		for(Point t_p = new Point(currentPosition.x + 2, currentPosition.y - 2); t_p.x < 8 && t_p.y >= 0; t_p.x++, t_p.y--)
-			if(isJump(new Move((destinationPoints.size() == 0)? currentPiece : currentCheckerBoard.getPiece(destinationPoints.get(destinationPoints.size() - 1)), t_p))){
-				destinationPointsForRightUpJumping.add(t_p);
-				movesWithJumps.add(new Move(currentPiece, destinationPointsForRightUpJumping));
-				currentCheckerBoard.executeTestMove((destinationPoints.size() == 0)? currentPiece.getPosition() : destinationPoints.get(destinationPoints.size() - 1), t_p);
-				movesWithJumps.addAll(computeMovesWithJumps(currentPiece, t_p, destinationPointsForRightUpJumping));
-				break;
-			}
-		currentCheckerBoard = t_board.clone();
-
-		@SuppressWarnings("unchecked")
-		ArrayList<Point> destinationPointsForLeftUpJumping = (ArrayList<Point>) destinationPoints.clone();
-		for(Point t_p = new Point(currentPosition.x - 2, currentPosition.y - 2); t_p.x >= 0 && t_p.y >= 0; t_p.x--, t_p.y--)
-			if(isJump(new Move((destinationPoints.size() == 0)? currentPiece : currentCheckerBoard.getPiece(destinationPoints.get(destinationPoints.size() - 1)), t_p))){
-				destinationPointsForLeftUpJumping.add(t_p);
-				movesWithJumps.add(new Move(currentPiece, destinationPointsForLeftUpJumping));
-				currentCheckerBoard.executeTestMove((destinationPoints.size() == 0)? currentPiece.getPosition() : destinationPoints.get(destinationPoints.size() - 1), t_p);
-				movesWithJumps.addAll(computeMovesWithJumps(currentPiece, t_p, destinationPointsForLeftUpJumping));
-				System.out.println("DefaultRule.computeMovesWithJumps_King()4" +movesWithJumps.size());
-				break;
-			}
-		currentCheckerBoard = t_board.clone();
+		for(ArrayList<Point> t_points : getAllPossiblePositionsForJumping(currentCheckerBoard.getPiece(currentPosition))){
+			@SuppressWarnings("unchecked")
+			ArrayList<Point> currentDestinationPoints = (ArrayList<Point>) destinationPoints.clone();
+			for(Point t_p : t_points)
+				if(isJump(new Move((destinationPoints.size() == 0)? currentPiece : currentCheckerBoard.getPiece(destinationPoints.get(destinationPoints.size() - 1)), t_p))){
+					currentDestinationPoints.add(t_p);
+					movesWithJumps.add(new Move(currentPiece, currentDestinationPoints));
+					currentCheckerBoard.executeTestMove((destinationPoints.size() == 0)? currentPiece.getPosition() : destinationPoints.get(destinationPoints.size() - 1), t_p);
+					movesWithJumps.addAll(computeMovesWithJumps(currentPiece, t_p, currentDestinationPoints));
+					break;
+				}
+			currentCheckerBoard = t_board.clone();
+		}
 
 		return movesWithJumps;
+	}
+
+	private ArrayList<ArrayList<Point>> getAllPossiblePositionsForJumping(Piece piece_jump){
+		ArrayList<ArrayList<Point>> allPoints = new ArrayList<>();
+		ArrayList<Point> points = new ArrayList<>();
+
+		for(Point t_p = new Point(piece_jump.getX() + 2, piece_jump.getY() + 2); (piece_jump.getPieceColor() == Color.LIGHT || piece_jump.getPieceType() == PieceType.KING) && 
+				t_p.x < 8 && t_p.y < 8; t_p = new Point(t_p.x + 1, t_p.y + 1)){
+			points.add(t_p);
+			if(piece_jump.getPieceType() == PieceType.MAN) break;
+		}
+		if(points.size() > 0){
+			allPoints.add(points);
+			points = new ArrayList<>();
+		}
+
+		for(Point t_p = new Point(piece_jump.getX() - 2, piece_jump.getY() + 2); (piece_jump.getPieceColor() == Color.LIGHT || piece_jump.getPieceType() == PieceType.KING) && 
+				t_p.x >= 0 && t_p.y < 8; t_p = new Point(t_p.x - 1, t_p.y + 1)){
+			points.add(t_p);
+			if(piece_jump.getPieceType() == PieceType.MAN) break;
+		}
+		if(points.size() > 0){
+			allPoints.add(points);
+			points = new ArrayList<>();
+		}
+
+
+		for(Point t_p = new Point(piece_jump.getX() + 2, piece_jump.getY() - 2); (piece_jump.getPieceColor() == Color.DARK || piece_jump.getPieceType() == PieceType.KING) && 
+				t_p.x < 8 && t_p.y >= 0; t_p = new Point(t_p.x + 1, t_p.y - 1)){
+			points.add(t_p);
+			if(piece_jump.getPieceType() == PieceType.MAN) break;
+		}
+		if(points.size() > 0){
+			allPoints.add(points);
+			points = new ArrayList<>();
+		}
+
+		for(Point t_p = new Point(piece_jump.getX() - 2, piece_jump.getY() - 2); (piece_jump.getPieceColor() == Color.DARK || piece_jump.getPieceType() == PieceType.KING) && 
+				t_p.x >= 0 && t_p.y >= 0; t_p = new Point(t_p.x - 1, t_p.y - 1)){
+			points.add(t_p);
+			if(piece_jump.getPieceType() == PieceType.MAN) break;
+		}
+		if(points.size() > 0){
+			allPoints.add(points);
+			points = new ArrayList<>();
+		}
+
+		return allPoints;
 	}
 
 	@Override
