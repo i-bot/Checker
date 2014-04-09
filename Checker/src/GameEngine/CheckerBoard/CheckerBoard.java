@@ -1,9 +1,10 @@
-package GameEngine;
+package GameEngine.CheckerBoard;
 
 import java.awt.Point;
 import java.util.ArrayList;
 
-import GameRules.Rule;
+import GameEngine.GameEngine;
+import GameEngine.GameRules.Rule;
 
 public class CheckerBoard {
 
@@ -81,10 +82,10 @@ public class CheckerBoard {
 
 	public Boolean executeMove(Move m){
 		Rule currentRule = GameEngine.getCurrentRule();
-		
-		if(currentRule.checkMove(GameEngine.getCurrentPlayer(), m)){
+
+		if(currentRule.checkMove(m)){
 			m.getSelectedPiece().setSelected(false);
-			
+
 			if(!GameEngine.getCurrentPlayer().containsMove(m)){
 				Piece pieceToRemove = GameEngine.getCurrentPlayer().getMoveForRemovingPiece().getSelectedPiece();
 				pieces[pieceToRemove.getX()][pieceToRemove.getY()] = null;
@@ -94,25 +95,26 @@ public class CheckerBoard {
 					lightCapturedPieces.add(pieceToRemove);
 				updatePiecesOnBoard();
 				currentRule.updateCurrentCheckerBoard();
-				
+
 				if(pieceToRemove.equals(m.getSelectedPiece()))
 					return true;
 			}
-			
-			pieces[m.getSelectedPiece().getX()][m.getSelectedPiece().getY()] = null;
 
 			Piece p = m.getSelectedPiece();
 			ArrayList<Point> destinationPoints = m.getDestinationPoints();
 
 			for(Point destinationPoint : destinationPoints){
-				if(currentRule.isJump(m)){
-					Piece capturedPiece = pieces[destinationPoint.x - (destinationPoint.x - p.getX()) / Math.abs(destinationPoint.x - p.getX())] [destinationPoint.y - (destinationPoint.y - p.getY()) / Math.abs(destinationPoint.y - p.getY())];
+				if(currentRule.isJump(new Move(p, destinationPoint))){
+					Piece capturedPiece = pieces[destinationPoint.x - (destinationPoint.x - p.getX()) / Math.abs(destinationPoint.x - p.getX())] 
+							[destinationPoint.y - (destinationPoint.y - p.getY()) / Math.abs(destinationPoint.y - p.getY())];
 					if(p.getPieceColor() == Color.LIGHT)
 						lightCapturedPieces.add(capturedPiece);
 					if(p.getPieceColor() == Color.DARK)
 						darkCapturedPieces.add(capturedPiece);
 					pieces[capturedPiece.getX()][capturedPiece.getY()] = null;
 				}
+
+				pieces[p.getX()][p.getY()] = null;
 
 				pieces[destinationPoint.x][destinationPoint.y] = p;
 				p.changePosition(destinationPoint.x, destinationPoint.y);
@@ -122,7 +124,7 @@ public class CheckerBoard {
 
 				if(destinationPoints.size() > 1){
 					try {
-						Thread.sleep(500);
+						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -130,7 +132,7 @@ public class CheckerBoard {
 					Gui.Gui.repaintScreen();
 				}
 			}
-			
+
 			if(m.getSelectedPiece().getPieceColor() == Color.LIGHT && m.getSelectedPiece().getY() == 7){
 				m.getSelectedPiece().makeToKing();
 				updatePiecesOnBoard();
@@ -155,21 +157,23 @@ public class CheckerBoard {
 		Rule currentRule = GameEngine.getCurrentRule();
 		Move m = new Move(pieces[start.x][start.y], end);
 
-		if(currentRule.checkMove(GameEngine.getCurrentPlayer(), m)){
-			pieces[m.getSelectedPiece().getX()][m.getSelectedPiece().getY()] = null;
+		if(currentRule.checkMove(m)){
 
 			Piece p = m.getSelectedPiece();
 			ArrayList<Point> destinationPoints = m.getDestinationPoints();
 
 			for(Point destinationPoint : destinationPoints){
 				if(currentRule.isJump(m)){
-					Piece capturedPiece = pieces[destinationPoint.x - (destinationPoint.x - p.getX()) / Math.abs(destinationPoint.x - p.getX())] [destinationPoint.y - (destinationPoint.y - p.getY()) / Math.abs(destinationPoint.y - p.getY())];
+					Piece capturedPiece = pieces[destinationPoint.x - (destinationPoint.x - p.getX()) / Math.abs(destinationPoint.x - p.getX())] 
+							[destinationPoint.y - (destinationPoint.y - p.getY()) / Math.abs(destinationPoint.y - p.getY())];
 					if(p.getPieceColor() == Color.LIGHT)
 						lightCapturedPieces.add(capturedPiece);
 					if(p.getPieceColor() == Color.DARK)
 						darkCapturedPieces.add(capturedPiece);
 					pieces[capturedPiece.getX()][capturedPiece.getY()] = null;
 				}
+
+				pieces[p.getX()][p.getY()] = null;
 
 				pieces[destinationPoint.x][destinationPoint.y] = p;
 				p.changePosition(destinationPoint.x, destinationPoint.y);

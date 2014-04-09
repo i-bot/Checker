@@ -1,5 +1,5 @@
 29
-/AIs/AIs1/AIs1.txt
+/AIs/AI1/AI1.txt
 /AIs/AIs2/AIs1.txt
 /AIs/AIs3/AIs1.txt
 /AIs/AIs4/AIs1.txt

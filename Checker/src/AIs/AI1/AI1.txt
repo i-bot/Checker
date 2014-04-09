@@ -1,4 +1,5 @@
 /AIs/AI1/AI1.jar
+FirstAI.AI1
 false
 AI 1
 0.0.1

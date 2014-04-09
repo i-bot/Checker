@@ -1,17 +1,18 @@
 package AIs;
 
 public class AI {
-	private String filepath, name, ai_location, version, date, writer;
+	private String filepath, name, ai_location, class_location, version, date, author;
 	private Boolean changeable; 
 
-	public AI(String filepath, String name, Boolean changeable, String ai_location, String version, String date, String writer){
+	public AI(String filepath, String name, Boolean changeable, String ai_location, String class_location, String version, String date, String author){
 		this.filepath = filepath;
 		this.name = name;
 		this.changeable = changeable;
 		this.ai_location = ai_location;
+		this.class_location = class_location;
 		this.version = version;
 		this.date = date;
-		this.writer = writer;
+		this.author = author;
 	}
 
 	public String getFilepath(){return filepath;}
@@ -26,11 +27,18 @@ public class AI {
 
 	public void setChangeable(Boolean changeable){this.changeable = changeable;}
 
-	public String getAi_location() {
+	public String getAI_Location() {
 		return ai_location;
 	}
+	public String getClass_Location() {
+		return class_location;
+	}
 
-	public void setAi_location(String ai_location) {
+	public void setClass_Location(String class_location) {
+		this.class_location = class_location;
+	}
+	
+	public void setAI_Location(String ai_location) {
 		this.ai_location = ai_location;
 	}
 
@@ -50,15 +58,15 @@ public class AI {
 		this.date = date;
 	}
 
-	public String getWriter() {
-		return writer;
+	public String getAuthor() {
+		return author;
 	}
 
-	public void setWriter(String writer) {
-		this.writer = writer;
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 
 	public String toString(){
-		return (ai_location + "\r" + String.valueOf(changeable) + "\r" + name + "\r" + version + "\r" + date + "\r" + writer);
+		return (ai_location + "\r" + String.valueOf(changeable) + "\r" + name + "\r" + version + "\r" + date + "\r" + author);
 	}
 }

@@ -5,10 +5,10 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
-import GameEngine.CheckerBoard;
 import GameEngine.GameEngine;
-import GameEngine.Piece;
-import GameEngine.Player;
+import GameEngine.CheckerBoard.CheckerBoard;
+import GameEngine.CheckerBoard.Piece;
+import GameEngine.Player.Player;
 import Graphics.Images;
 import Graphics.Scaler;
 import KeyInput.MousePoint;

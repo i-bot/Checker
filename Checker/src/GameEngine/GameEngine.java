@@ -2,8 +2,14 @@ package GameEngine;
 
 import java.awt.Point;
 
-import GameRules.DefaultRule;
-import GameRules.Rule;
+import GameEngine.CheckerBoard.CheckerBoard;
+import GameEngine.CheckerBoard.Move;
+import GameEngine.CheckerBoard.Piece;
+import GameEngine.GameRules.DefaultRule;
+import GameEngine.GameRules.Rule;
+import GameEngine.Player.AIPlayer;
+import GameEngine.Player.Player;
+import GameEngine.Player.RealPlayer;
 
 public class GameEngine {
 
@@ -15,13 +21,18 @@ public class GameEngine {
 		GameEngine.game = game;
 		checkerBoard = new CheckerBoard();
 		rule = new DefaultRule(checkerBoard);
-		changePlayer(game.getPlayer2());
+		if(game.getPlayer1() instanceof AIPlayer && !((AIPlayer) game.getPlayer1()).load()) System.err.println(game.getPlayer1() + " didn't load a valid AI");
+		if(game.getPlayer2() instanceof AIPlayer && !((AIPlayer) game.getPlayer2()).load()) System.err.println(game.getPlayer2() + " didn't load a valid AI");	
 	}
 	
 	public static void restart(){
 		init(game);
 	}
 
+	public static void start(){
+		changePlayer(game.getPlayer2());
+	}
+	
 	public static Game getCurrentGame(){
 		return game;
 	}
@@ -56,7 +67,7 @@ public class GameEngine {
 						currentPlayer.setSelectedPieceForMultipleJumps(currentMove.getSelectedPiece());
 						currentPlayer.setMovesWithJumps(rule.getMovesWithJumps(currentMove.getSelectedPiece()));
 					}
-					else {
+					else {	
 						changePlayer(currentPlayer);
 					}
 				}
@@ -67,18 +78,28 @@ public class GameEngine {
 	} 
 
 	private static void changePlayer(Player currentPlayer){
-		game.changeCurrentPlayer((currentPlayer == game.getPlayer1())? game.getPlayer2() : game.getPlayer1());
-		if(game.getCurrentPlayer() instanceof RealPlayer){
-			System.out.println("GameEngine.changePlayer(): currentPlayer instanceof RealPlayer");
-
+		currentPlayer = (currentPlayer == game.getPlayer1())? game.getPlayer2() : game.getPlayer1();
+		currentPlayer.clear();
+		
+		game.changeCurrentPlayer(currentPlayer);
+		Gui.Gui.repaintScreen();
+		
+		if(currentPlayer instanceof RealPlayer){			
+			currentPlayer.setMovesWithJumps(rule.getMovesWithJumps(currentPlayer.getColor_Player()));
 		}
-		else if(game.getCurrentPlayer() instanceof AIPlayer){
-			System.out.println("GameEngine.changePlayer(): currentPlayer instanceof AIPlayer");
-			changePlayer(game.getCurrentPlayer());
-		}		
+		else if(currentPlayer instanceof AIPlayer){
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			checkerBoard.executeMove(((AIPlayer) currentPlayer).getNextMove(checkerBoard.clone(), rule.clone(), currentPlayer.getColor_Player()));
+			
 
-		game.getCurrentPlayer().setMovesWithJumps(rule.getMovesWithJumps(game.getCurrentPlayer().getColor_Player()));
-		for(Move m : rule.getMovesWithJumps(game.getCurrentPlayer().getColor_Player()))
-			System.out.println("GameEngine.changePlayer(): " + m.toString());
+			currentPlayer.setMovesWithJumps(rule.getMovesWithJumps(currentPlayer.getColor_Player()));
+			
+			changePlayer(currentPlayer);
+		}		
 	}
 }

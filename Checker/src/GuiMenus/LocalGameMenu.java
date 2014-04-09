@@ -1,11 +1,12 @@
 package GuiMenus;
 
-import GameEngine.AIPlayer;
-import GameEngine.Color;
 import GameEngine.Game;
+import GameEngine.GameEngine;
+import GameEngine.CheckerBoard.Color;
 import GameEngine.Game.GameType;
-import GameEngine.Player;
-import GameEngine.RealPlayer;
+import GameEngine.Player.AIPlayer;
+import GameEngine.Player.Player;
+import GameEngine.Player.RealPlayer;
 import Engine.MenuHandler;
 import GuiElements.AIButton;
 import GuiElements.Button;
@@ -75,9 +76,9 @@ public class LocalGameMenu extends Menu{
 				
 				localGame = new Game(GameType.LOCAL, player1, player2);
 				
-				GameEngine.GameEngine.init(localGame);
-				
+				GameEngine.init(localGame);
 				MenuHandler.changeMenu(19);
+				GameEngine.start();
 			}
 			else if(button instanceof NormalButton){
 				choosePlayer1Container.setVisible(true);

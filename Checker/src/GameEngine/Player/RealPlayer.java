@@ -1,7 +1,11 @@
-package GameEngine;
+package GameEngine.Player;
 
 import java.awt.Point;
 import java.util.ArrayList;
+
+import GameEngine.CheckerBoard.Color;
+import GameEngine.CheckerBoard.Move;
+import GameEngine.CheckerBoard.Piece;
 
 public class RealPlayer extends Player{
 
@@ -64,5 +68,14 @@ public class RealPlayer extends Player{
 		unselectPiece();
 		currentMove = null;
 		movesWithJumps = new ArrayList<>();
+	}
+
+	@Override
+	public Boolean containsMove(Move m) {
+		for(Move moveFromList : movesWithJumps)
+			if(moveFromList.equals_player(m))
+				return true;
+		
+		return movesWithJumps.size() == 0;
 	}
 }

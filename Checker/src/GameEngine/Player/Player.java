@@ -1,6 +1,9 @@
-package GameEngine;
+package GameEngine.Player;
 
 import java.util.ArrayList;
+
+import GameEngine.CheckerBoard.Color;
+import GameEngine.CheckerBoard.Move;
 
 public abstract class Player {
 	
@@ -8,16 +11,12 @@ public abstract class Player {
 	protected Color color_player;
 	protected ArrayList<Move> movesWithJumps;
 	
+	public abstract void clear();
+	public abstract Boolean containsMove(Move m);
+	
 	public Player(Color color_player){
 		this.color_player = color_player;
-	}
-	
-	public Boolean containsMove(Move m){
-		for(Move moveFromList : movesWithJumps)
-			if(moveFromList.equals(m))
-				return true;
-		
-		return movesWithJumps.size() == 0;
+		movesWithJumps = new ArrayList<>();
 	}
 
 	public void setMovesWithJumps(ArrayList<Move> movesWithJumps){

@@ -1,5 +1,7 @@
 package GameEngine;
 
+import GameEngine.Player.Player;
+
 public class Game {
 	private GameType gameType;
 	private Player player1, player2, currentPlayer;

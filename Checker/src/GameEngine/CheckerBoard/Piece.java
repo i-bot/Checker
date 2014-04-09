@@ -1,7 +1,8 @@
-package GameEngine;
+package GameEngine.CheckerBoard;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+
 
 public class Piece{
 

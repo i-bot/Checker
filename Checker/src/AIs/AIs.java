@@ -38,20 +38,21 @@ public class AIs {
 		ais = new ArrayList<AI>();
 		for(String s : filepaths){			
 			File f = new File(path + s);
-			String ai_location = "", name = "", version = "", date = "", writer = "";
+			String ai_location = "", class_location = "", name = "", version = "", date = "", author = "";
 			Boolean changeable = false; 
 
 			try {scanner = new Scanner(f);} 
 			catch (FileNotFoundException e) {e.printStackTrace();}
 
-			if(scanner.hasNextLine())ai_location = scanner.nextLine();
+			if(scanner.hasNextLine())ai_location = path + scanner.nextLine();
+			if(scanner.hasNextLine())class_location = scanner.nextLine();
 			if(scanner.hasNextLine())changeable = Boolean.parseBoolean(scanner.nextLine());
 			if(scanner.hasNextLine())name = scanner.nextLine();
 			if(scanner.hasNextLine())version = scanner.nextLine();
 			if(scanner.hasNextLine())date = scanner.nextLine();
-			if(scanner.hasNextLine())writer = scanner.nextLine();
+			if(scanner.hasNextLine())author = scanner.nextLine();
 						
-			ais.add(new AI(s, name, changeable, ai_location, version, date, writer));
+			ais.add(new AI(s, name, changeable, ai_location, class_location, version, date, author));
 			scanner.close();
 		}
 	}

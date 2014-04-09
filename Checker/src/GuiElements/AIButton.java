@@ -38,7 +38,7 @@ public class AIButton extends Button {
 		attributes.add(ai.getName());
 		attributes.add("Version: " + ai.getVersion());
 		attributes.add("Date: " + ai.getDate());
-		attributes.add("Writer: " + ai.getWriter());
+		attributes.add("Writer: " + ai.getAuthor());
 	}
 	
 	public AI getAI(){
