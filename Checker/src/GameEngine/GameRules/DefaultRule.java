@@ -41,7 +41,7 @@ public class DefaultRule extends Rule{
 			for(Point t_p : t_points)
 				if(isJump(new Move((destinationPoints.size() == 0)? currentPiece : currentCheckerBoard.getPiece(destinationPoints.get(destinationPoints.size() - 1)), t_p))){
 					currentDestinationPoints.add(t_p);
-					currentCheckerBoard.executeTestMove((destinationPoints.size() == 0)? currentPiece.getPosition() : destinationPoints.get(destinationPoints.size() - 1), t_p);
+					currentCheckerBoard.executeTestMove((destinationPoints.size() == 0)? currentPiece.getPosition() : destinationPoints.get(destinationPoints.size() - 1), t_p, this);
 					ArrayList<Move> t_moves = computeMovesWithJumps(currentPiece, t_p, currentDestinationPoints);
 					if(t_moves.size() > 0)
 						movesWithJumps.addAll(t_moves);
@@ -132,7 +132,7 @@ public class DefaultRule extends Rule{
 
 	@Override
 	public Boolean checkMove(Move m) {
-		return (m.getSelectedPiece().getPieceColor() == Color.LIGHT)? checkMoveForLightPiece(m) : checkMoveForDarkPiece(m);
+		return isJump(m) || isNormalMove(m);
 	}
 
 	@Override
@@ -174,56 +174,47 @@ public class DefaultRule extends Rule{
 	}
 
 	public Boolean isNormalMove(Move m){
-		if(m.getSelectedPiece().getPieceType() == Piece.PieceType.MAN && m.getDestinationPoints().size() == 1){
-			if(m.getSelectedPiece().getPieceColor() == Color.LIGHT && isNormalMove_Light_Man(m.getSelectedPiece().getPosition(), m.getDestinationPoints().get(0)))
-				return true;
-			if(m.getSelectedPiece().getPieceColor() == Color.DARK && isNormalMove_Dark_Man(m.getSelectedPiece().getPosition(), m.getDestinationPoints().get(0)))
-				return true;
-		}
-		if(m.getSelectedPiece().getPieceType() == Piece.PieceType.KING && m.getDestinationPoints().size() == 1){
-			if(isNormalMove_King(m.getSelectedPiece().getPosition(), m.getDestinationPoints().get(0)))
-				return true;
-		}
+		if(m.getDestinationPoints().size() == 1){
+			Point p_start = m.getSelectedPiece().getPosition(); 
+			Point p_end = m.getDestinationPoints().get(0);
 
+			if(Math.abs(p_start.x - p_end.x) != Math.abs(p_start.y - p_end.y))
+				return false;
+			
+			if(m.getSelectedPiece().getPieceType() == Piece.PieceType.MAN){
+				if(m.getSelectedPiece().getPieceColor() == Color.LIGHT && isNormalMove_Light_Man(p_start, p_end))
+					return true;
+				if(m.getSelectedPiece().getPieceColor() == Color.DARK && isNormalMove_Dark_Man(p_start, p_end))
+					return true;
+			}
+			if(m.getSelectedPiece().getPieceType() == Piece.PieceType.KING){
+				if(isNormalMove_King(p_start, p_end))
+					return true;
+			}
+		}
 		return false;
 	}
 
-	public Boolean isJump(Move m){
+	public Boolean isJump(Move move){
+		Move m = move.clone();
 		Point lastPosition = m.getSelectedPiece().getPosition();
 
-		for(int i = 0; i < m.getDestinationPoints().size(); i++){
+		for(Point p : m.getDestinationPoints()){
+			if(Math.abs(lastPosition.x - p.x) != Math.abs(lastPosition.y - p.y))
+				return false;
 			if(m.getSelectedPiece().getPieceType() == Piece.PieceType.MAN){
-				if(m.getSelectedPiece().getPieceColor() == Color.LIGHT && !isJump_Light_Man(lastPosition, m.getDestinationPoints().get(i)))
+				if(m.getSelectedPiece().getPieceColor() == Color.LIGHT && !isJump_Light_Man(lastPosition, p))
 					return false;
-				if(m.getSelectedPiece().getPieceColor() == Color.DARK && !isJump_Dark_Man(lastPosition, m.getDestinationPoints().get(i)))
+				if(m.getSelectedPiece().getPieceColor() == Color.DARK && !isJump_Dark_Man(lastPosition, p))
 					return false;				
 			}
 			if(m.getSelectedPiece().getPieceType() == Piece.PieceType.KING){
-				if(!isJump_King(lastPosition, m.getDestinationPoints().get(i), m.getSelectedPiece().getPieceColor()))
+				if(!isJump_King(lastPosition,p, m.getSelectedPiece().getPieceColor()))
 					return false;	
-			}
-			lastPosition = m.getDestinationPoints().get(i);
-		}
-
-		return true;
-	}
-
-	private Boolean checkMoveForLightPiece(Move m){
-		return (m.getSelectedPiece().getPieceType() == Piece.PieceType.MAN)? checkMoveForLightAndManPiece(m) : checkMoveForKingPiece(m);
-	}
-
-	private Boolean checkMoveForLightAndManPiece(Move m){
-		Point lastPosition = m.getSelectedPiece().getPosition();
-		for(Point destinationPoint : m.getDestinationPoints()){
-			if(destinationPoint.y < lastPosition.y)
-				return false;
-			else if(Math.abs(lastPosition.x - destinationPoint.x) != Math.abs(lastPosition.y - destinationPoint.y))
-				return false;
-			else if(m.getDestinationPoints().size() > 1 && !isJump_Light_Man(lastPosition, destinationPoint) && isNormalMove_Light_Man(lastPosition, destinationPoint))
-				return false;
-			else if(m.getDestinationPoints().size() == 1 && !isJump_Light_Man(lastPosition, destinationPoint) && !isNormalMove_Light_Man(lastPosition, destinationPoint))
-				return false;
-			else lastPosition = destinationPoint;
+			}			
+			if(canBeMadeToKing(p, m.getSelectedPiece().getPieceColor())) m.getSelectedPiece().makeToKing();
+			
+			lastPosition = p;
 		}
 
 		return true;
@@ -243,27 +234,6 @@ public class DefaultRule extends Rule{
 				currentCheckerBoard.getPiece(endPosition) == null);
 	}
 
-	private Boolean checkMoveForDarkPiece(Move m){
-		return (m.getSelectedPiece().getPieceType() == Piece.PieceType.MAN)? checkMoveForDarkAndManPiece(m) : checkMoveForKingPiece(m);
-	}
-
-	private Boolean checkMoveForDarkAndManPiece(Move m){
-		Point lastPosition = m.getSelectedPiece().getPosition();
-		for(Point destinationPoint : m.getDestinationPoints()){
-			if(destinationPoint.y > lastPosition.y)
-				return false;
-			else if(Math.abs(lastPosition.x - destinationPoint.x) != Math.abs(lastPosition.y - destinationPoint.y))
-				return false;
-			else if(m.getDestinationPoints().size() > 1 && !isJump_Dark_Man(lastPosition, destinationPoint) && isNormalMove_Dark_Man(lastPosition, destinationPoint))
-				return false;
-			else if(m.getDestinationPoints().size() == 1 && !isJump_Dark_Man(lastPosition, destinationPoint) && !isNormalMove_Dark_Man(lastPosition, destinationPoint))
-				return false;
-			else lastPosition = destinationPoint;
-		}
-
-		return true;
-	}
-
 	public Boolean isJump_Dark_Man(Point startPosition, Point endPosition){
 		Point p_enemy = new Point(startPosition.x + (endPosition.x - startPosition.x) / 2, startPosition.y + (endPosition.y - startPosition.y) / 2);
 		return (endPosition.x >= 0 && endPosition.x < 8 && endPosition.y >= 0 && endPosition.y < 8 && 
@@ -276,23 +246,6 @@ public class DefaultRule extends Rule{
 		return (endPosition.x >= 0 && endPosition.x < 8 && endPosition.y >= 0 && endPosition.y < 8 && 
 				Math.abs(endPosition.x - startPosition.x) == 1 && endPosition.y - startPosition.y == -1 && 
 				currentCheckerBoard.getPiece(endPosition) == null);
-	}
-
-	private Boolean checkMoveForKingPiece(Move m){
-		Point lastPosition = m.getSelectedPiece().getPosition();
-		for(Point destinationPoint : m.getDestinationPoints()){
-			if(Math.abs(lastPosition.x - destinationPoint.x) != Math.abs(lastPosition.y - destinationPoint.y))
-				return false;
-			else if(m.getDestinationPoints().size() > 1 && !isJump_King(lastPosition, destinationPoint, m.getSelectedPiece().getPieceColor()) && 
-					isNormalMove_King(lastPosition, destinationPoint))
-				return false;
-			else if(m.getDestinationPoints().size() == 1 && !isJump_King(lastPosition, destinationPoint, m.getSelectedPiece().getPieceColor()) && 
-					!isNormalMove_King(lastPosition, destinationPoint))
-				return false;
-			else lastPosition = destinationPoint;
-		}
-
-		return true;
 	}
 
 	public Boolean isJump_King(Point startPosition, Point endPosition, Color c_player){
@@ -327,5 +280,14 @@ public class DefaultRule extends Rule{
 			return correctNormalMove;
 		}
 		else return false;
+	}
+
+	@Override
+	public Boolean canBeMadeToKing(Piece piece) {
+		return canBeMadeToKing(piece.getPosition(), piece.getPieceColor());
+	}
+
+	private Boolean canBeMadeToKing(Point position, Color color) {
+		return ((color == Color.LIGHT && position.getY() == 7) || (color == Color.DARK && position.getY() == 0));
 	}
 }

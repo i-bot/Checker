@@ -20,6 +20,7 @@ public abstract class Rule {
 	public abstract Boolean canJump(Piece piece);
 	public abstract Boolean isNormalMove(Move m);
 	public abstract Boolean isJump(Move m);	
+	public abstract Boolean canBeMadeToKing(Piece piece);
 	
 	public Rule(CheckerBoard originalCheckerBoard){
 		this.originalCheckerBoard = originalCheckerBoard;

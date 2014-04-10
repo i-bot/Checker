@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 public class Gui extends JFrame{
 	private static BufferStrategy bufferStrategy;
 	private static Canvas canvas;
-	public static Boolean hasLoaded = false, isGameMenu=false;
+	public static Boolean hasLoaded = false;
 	static BufferedImage background;
 	static Thread repainterThread;
 	
@@ -35,9 +35,7 @@ public class Gui extends JFrame{
 	
 	public void addListeners(){
 		canvas.addMouseListener(new KeyInput.Mouse());
-		KeyInput.Mouse.setGameMenuUsed(false);
 		canvas.addKeyListener(new KeyInput.Keyboard());
-		KeyInput.Keyboard.setGameMenuUsed(false);
 		addWindowListener(new KeyInput.Window());
 	}
 	
@@ -68,11 +66,5 @@ public class Gui extends JFrame{
 	
 	public static BufferStrategy getGuiBufferStrategy(){
 		return bufferStrategy;
-	}
-	
-	public static void setGameMenu(Boolean isGameMenu){
-		Gui.isGameMenu = isGameMenu;
-		KeyInput.Keyboard.setGameMenuUsed(isGameMenu);
-		KeyInput.Mouse.setGameMenuUsed(isGameMenu);
 	}
 }

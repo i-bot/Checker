@@ -3,11 +3,13 @@ package Main;
 import javax.swing.JFrame;
 
 import Engine.Loader;
+import GameEngine.GameEngine;
 import Gui.Gui;
 
 public class Main {
 
 	private static String path;
+	private static GameEngine gameEngine;
 
 	static{
 		path = Main.class.getResource("Main.class").getPath();
@@ -46,5 +48,13 @@ public class Main {
 
 	public static String getPath(){
 		return path;
+	}
+	
+	public static void setGameEngine(GameEngine gameEngine){
+		Main.gameEngine = gameEngine;
+	}
+	
+	public static GameEngine getGameEngine(){
+		return gameEngine;
 	}
 }

@@ -2,6 +2,7 @@ package GameEngine;
 
 import java.awt.Point;
 
+import Engine.MenuHandler;
 import GameEngine.CheckerBoard.CheckerBoard;
 import GameEngine.CheckerBoard.Move;
 import GameEngine.CheckerBoard.Piece;
@@ -10,81 +11,92 @@ import GameEngine.GameRules.Rule;
 import GameEngine.Player.AIPlayer;
 import GameEngine.Player.Player;
 import GameEngine.Player.RealPlayer;
+import KeyInput.Mouse;
+import KeyInput.MousePoint;
 
-public class GameEngine {
+public class GameEngine extends Thread{
 
 	private static Game game;
 	private static Rule rule;
 	private static CheckerBoard checkerBoard;
 
-	public static void init(Game game){
+	public void init(Game game){
 		GameEngine.game = game;
+		game.changeCurrentPlayer(game.getPlayer1());
 		checkerBoard = new CheckerBoard();
 		rule = new DefaultRule(checkerBoard);
 		if(game.getPlayer1() instanceof AIPlayer && !((AIPlayer) game.getPlayer1()).load()) System.err.println(game.getPlayer1() + " didn't load a valid AI");
 		if(game.getPlayer2() instanceof AIPlayer && !((AIPlayer) game.getPlayer2()).load()) System.err.println(game.getPlayer2() + " didn't load a valid AI");	
 	}
-	
-	public static void restart(){
-		init(game);
-	}
 
-	public static void start(){
-		changePlayer(game.getPlayer2());
-	}
-	
-	public static Game getCurrentGame(){
+	public Game getCurrentGame(){
 		return game;
 	}
 
-	public static Rule getCurrentRule(){
+	public Rule getCurrentRule(){
 		return rule;
 	}
 
-	public static CheckerBoard getCurrentCheckerBoard(){
+	public CheckerBoard getCurrentCheckerBoard(){
 		return checkerBoard;
 	}
 
-	public static Player getCurrentPlayer(){
+	public Player getCurrentPlayer(){
 		return game.getCurrentPlayer(); 
 	} 
 
-	public static void handleMouseInput(int x, int y){
+	private Boolean handleMouseInput(Point p){
 		if(getCurrentPlayer() instanceof RealPlayer){
 			RealPlayer currentPlayer = (RealPlayer) getCurrentPlayer();
-			Piece selectedPiece = checkerBoard.getPiece(x, y);
+			Piece selectedPiece = checkerBoard.getPiece(p);
 			Move currentMove = null;
 			if(selectedPiece != null && selectedPiece.getPieceColor() == currentPlayer.getColor_Player() && currentPlayer.canChangeSelectedPiece())
 				currentPlayer.handleSelecetedPiece(selectedPiece);
 			else if(selectedPiece == null && currentPlayer.hasPieceSelected())
-				currentMove = currentPlayer.handleDestinationPoint(new Point(x, y));
+				currentMove = currentPlayer.handleDestinationPoint(p);
 
 			if(currentMove != null){
 				Boolean normalMove = rule.isNormalMove(currentMove);
-				if(checkerBoard.executeMove(currentMove)){
+				if(checkerBoard.executeMove(currentMove, rule, currentPlayer)){
 					currentPlayer.clear();
 					if(rule.canJump(currentMove.getSelectedPiece()) && !normalMove){
 						currentPlayer.setSelectedPieceForMultipleJumps(currentMove.getSelectedPiece());
 						currentPlayer.setMovesWithJumps(rule.getMovesWithJumps(currentMove.getSelectedPiece()));
 					}
 					else {	
-						changePlayer(currentPlayer);
+						return true;
 					}
 				}
 			}
 		}
 
 		Gui.Gui.repaintScreen();
+		return false;
 	} 
 
-	private static void changePlayer(Player currentPlayer){
-		currentPlayer = (currentPlayer == game.getPlayer1())? game.getPlayer2() : game.getPlayer1();
+	private void getAndExecuteNextMove(Player currentPlayer){
 		currentPlayer.clear();
-		
-		game.changeCurrentPlayer(currentPlayer);
+		currentPlayer.setMovesWithJumps(rule.getMovesWithJumps(currentPlayer.getColor_Player()));
+
 		Gui.Gui.repaintScreen();
-		
-		if(currentPlayer instanceof RealPlayer){			
+
+		if(currentPlayer instanceof RealPlayer){
+			Boolean realPlayerExecutedMove = false;
+
+			while(!realPlayerExecutedMove){
+				for(MousePoint mp : Mouse.getMouseList())
+					if(MenuHandler.getGameMenu().getGameScreen().contains(mp))
+						realPlayerExecutedMove = handleMouseInput(MenuHandler.getGameMenu().getGameScreen().convert(mp));
+
+				Mouse.resetMouseList();
+
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			currentPlayer.setMovesWithJumps(rule.getMovesWithJumps(currentPlayer.getColor_Player()));
 		}
 		else if(currentPlayer instanceof AIPlayer){
@@ -94,12 +106,17 @@ public class GameEngine {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			checkerBoard.executeMove(((AIPlayer) currentPlayer).getNextMove(checkerBoard.clone(), rule.clone(), currentPlayer.getColor_Player()));
-			
+			checkerBoard.executeMove(((AIPlayer) currentPlayer).getNextMove(checkerBoard.clone(), rule.clone(), currentPlayer.getColor_Player()), rule, currentPlayer);
+		}
 
-			currentPlayer.setMovesWithJumps(rule.getMovesWithJumps(currentPlayer.getColor_Player()));
-			
-			changePlayer(currentPlayer);
-		}		
+		game.changeCurrentPlayer((currentPlayer == game.getPlayer1())? game.getPlayer2() : game.getPlayer1());
+	}
+
+	@Override
+	public void run() {
+		Mouse.resetMouseList();
+
+		while(true)
+			getAndExecuteNextMove(game.getCurrentPlayer());
 	}
 }

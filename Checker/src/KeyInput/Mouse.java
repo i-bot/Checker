@@ -8,11 +8,10 @@ import Engine.MenuHandler;
 
 public class Mouse implements MouseListener{
 	private static ArrayList<MousePoint> list= new ArrayList<MousePoint>();
-	private static Boolean gameMenuUsed;
 
 	public void checkMouseInput(MousePoint mouse){
-		if(!gameMenuUsed)MenuHandler.checkMouseInput(mouse);
-		else list.add(mouse);
+		if(!MenuHandler.checkMouseInput(mouse))
+			list.add(mouse);
 	}
 	
 	@Override
@@ -36,15 +35,11 @@ public class Mouse implements MouseListener{
 		checkMouseInput(new MousePoint(me.getX(), me.getY(), (me.getButton() == MouseEvent.BUTTON1)));		
 	}
 	
-	public static void setGameMenuUsed(Boolean gameMenuUsed){
-		Mouse.gameMenuUsed=gameMenuUsed;
-	}
-	
 	public static ArrayList<MousePoint> getMouseList(){
 		return list;
 	}
 	
-	public void resetMouseList(){
+	public static void resetMouseList(){
 		list = new ArrayList<MousePoint>();
 	}
 }

@@ -1,5 +1,6 @@
 package Engine;
 
+import GameEngine.GameEngine;
 import Gui.Gui;
 
 public class Loader implements Runnable{
@@ -16,6 +17,8 @@ public class Loader implements Runnable{
 		Languages.Languages.setLanguage(Settings.Settings.getLanguage());
 		AIs.AIs.readAIs(path);
 		
+		GameEngine gameEngine = new GameEngine();
+		Main.Main.setGameEngine(gameEngine);
 		
 		try {
 			Thread.sleep(2500);

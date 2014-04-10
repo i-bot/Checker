@@ -12,9 +12,12 @@ import Languages.Languages;
 
 public class GameMenu extends Menu{	
 
-	GameScreen gameScreen;
+	private GameScreen gameScreen;
+	private GameEngine gameEngine;
 
-	public GameMenu(){
+	public GameMenu(GameEngine gameEngine){
+		this.gameEngine = gameEngine;
+		
 		addButtonListener(new GameButtonListener());
 
 		add(new Image(0, 0, Graphics.Images.getGraphic("/Graphics/menu_background/Menu_Background_Game.png")));
@@ -29,12 +32,17 @@ public class GameMenu extends Menu{
 		add(new NormalButton(0, Languages.getButtonAndMenuTitle(0), TitleOrientation.MID, 35, 815, 270, 50, 255, 255, 0));
 
 		gameScreen = new GameScreen(19, null, null, 340, 20, 1240, 860);
+		gameScreen.setGameEngine(gameEngine);
 		add(gameScreen);
+	}
+	
+	public GameScreen getGameScreen(){
+		return gameScreen;
 	}
 
 	@Override
 	public void createNonStaticContainersAndSubMenus() {
-		gameScreen.update(GameEngine.getCurrentCheckerBoard());
+		gameScreen.update();
 	}
 
 	private class GameButtonListener extends ButtonListener{
@@ -42,8 +50,10 @@ public class GameMenu extends Menu{
 		@Override
 		public void clicked(Button button){
 			if(button instanceof NormalButton){	
-				if(button.getID() == 20)
-					GameEngine.restart();
+				if(button.getID() == 20){
+					gameEngine.init(gameEngine.getCurrentGame());
+					gameEngine.start();
+				}
 				MenuHandler.changeMenu(button.getID());
 			}
 		}

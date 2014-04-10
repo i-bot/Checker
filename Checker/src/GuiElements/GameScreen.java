@@ -15,6 +15,8 @@ import KeyInput.MousePoint;
 
 public class GameScreen extends Button {
 
+	private GameEngine gameEngine;
+	
 	private int t_x, t_y;
 	private Rectangle board;
 	private CheckerBoard checkerBoard;
@@ -46,19 +48,23 @@ public class GameScreen extends Button {
 		guiElements.add(darkPlayer_name);
 		guiElements.add(currentPlayerLabel);
 	}
+	
+	public void setGameEngine(GameEngine gameEngine){
+		this.gameEngine = gameEngine;
+	}
 
-	public void update(CheckerBoard checkerBoard){
-		this.checkerBoard = checkerBoard;
-
-		lightPlayer_name.setText(GameEngine.getCurrentGame().getPlayer1().getName());
-		darkPlayer_name.setText(GameEngine.getCurrentGame().getPlayer2().getName());
+	public void update(){
+		checkerBoard = gameEngine.getCurrentCheckerBoard();
+		
+		lightPlayer_name.setText(gameEngine.getCurrentGame().getPlayer1().getName());
+		darkPlayer_name.setText(gameEngine.getCurrentGame().getPlayer2().getName());
 
 		updateCurrentPlayerLabel();
 	}
 
 	public void updateCurrentPlayerLabel(){
-		Player currentPlayer = GameEngine.getCurrentPlayer();
-		currentPlayerLabel.setText("It's your turn " + currentPlayer.getName() + " (" + ((currentPlayer == GameEngine.getCurrentGame().getPlayer1())? "light" : "dark") + ")");
+		Player currentPlayer = gameEngine.getCurrentPlayer();
+		currentPlayerLabel.setText("It's your turn " + currentPlayer.getName() + " (" + ((currentPlayer == gameEngine.getCurrentGame().getPlayer1())? "light" : "dark") + ")");
 	}
 
 	private void setT_Point(int x, int y){
@@ -67,8 +73,15 @@ public class GameScreen extends Button {
 	}
 
 	public Boolean isClicked(MousePoint point){
-		if(board.contains(new Point(point.getX(), point.getY()))) GameEngine.handleMouseInput((point.getX() - board.x) / Scaler.scale(100), (point.getY() - board.y) / Scaler.scale(100));;
 		return false;
+	}
+	
+	public Point convert(MousePoint point){
+		return new Point((point.getX() - board.x) / Scaler.scale(100), (point.getY() - board.y) / Scaler.scale(100));
+	}
+	
+	public Boolean contains(MousePoint point){
+		return board.contains(point.toPoint());
 	}
 
 	@Override

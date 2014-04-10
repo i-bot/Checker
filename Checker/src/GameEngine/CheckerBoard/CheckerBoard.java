@@ -3,8 +3,8 @@ package GameEngine.CheckerBoard;
 import java.awt.Point;
 import java.util.ArrayList;
 
-import GameEngine.GameEngine;
 import GameEngine.GameRules.Rule;
+import GameEngine.Player.Player;
 
 public class CheckerBoard {
 
@@ -80,14 +80,13 @@ public class CheckerBoard {
 		return darkCapturedPieces;
 	}
 
-	public Boolean executeMove(Move m){
-		Rule currentRule = GameEngine.getCurrentRule();
-
-		if(currentRule.checkMove(m)){
+	public Boolean executeMove(Move m, Rule currentRule, Player currentPlayer){
+				
+		if(currentRule.checkMove(m)){		
 			m.getSelectedPiece().setSelected(false);
 
-			if(!GameEngine.getCurrentPlayer().containsMove(m)){
-				Piece pieceToRemove = GameEngine.getCurrentPlayer().getMoveForRemovingPiece().getSelectedPiece();
+			if(!currentPlayer.containsMove(m)){
+				Piece pieceToRemove = currentPlayer.getMoveForRemovingPiece().getSelectedPiece();
 				pieces[pieceToRemove.getX()][pieceToRemove.getY()] = null;
 				if(pieceToRemove.getPieceColor() == Color.LIGHT)
 					darkCapturedPieces.add(pieceToRemove);
@@ -118,7 +117,9 @@ public class CheckerBoard {
 
 				pieces[destinationPoint.x][destinationPoint.y] = p;
 				p.changePosition(destinationPoint.x, destinationPoint.y);
-
+				
+				if(currentRule.canBeMadeToKing(p)) p.makeToKing();
+				
 				updatePiecesOnBoard();
 				currentRule.updateCurrentCheckerBoard();
 
@@ -133,28 +134,13 @@ public class CheckerBoard {
 				}
 			}
 
-			if(m.getSelectedPiece().getPieceColor() == Color.LIGHT && m.getSelectedPiece().getY() == 7){
-				m.getSelectedPiece().makeToKing();
-				updatePiecesOnBoard();
-				currentRule.updateCurrentCheckerBoard();
-			}
-			if(m.getSelectedPiece().getPieceColor() == Color.DARK && m.getSelectedPiece().getY() == 0){
-				m.getSelectedPiece().makeToKing();
-				updatePiecesOnBoard();
-				currentRule.updateCurrentCheckerBoard();
-			}
-
-			updatePiecesOnBoard();
-			currentRule.updateCurrentCheckerBoard();
-
 			return true;
 		}
 
 		return false;
 	}
 
-	public void executeTestMove(Point start, Point end){
-		Rule currentRule = GameEngine.getCurrentRule();
+	public void executeTestMove(Point start, Point end, Rule currentRule){
 		Move m = new Move(pieces[start.x][start.y], end);
 
 		if(currentRule.checkMove(m)){
@@ -180,15 +166,9 @@ public class CheckerBoard {
 
 				updatePiecesOnBoard();
 			}
+			
+			if(currentRule.canBeMadeToKing(p)) p.makeToKing();
 		}
-
-		if(m.getSelectedPiece().getPieceColor() == Color.LIGHT && m.getSelectedPiece().getY() == 7){
-			m.getSelectedPiece().makeToKing();
-		}
-		if(m.getSelectedPiece().getPieceColor() == Color.DARK && m.getSelectedPiece().getY() == 0){
-			m.getSelectedPiece().makeToKing();
-		}
-
 	}
 
 	public CheckerBoard clone(){
