@@ -80,8 +80,8 @@ public class CheckerBoard {
 		return darkCapturedPieces;
 	}
 
-	public Boolean executeMove(Move m, Rule currentRule, Player currentPlayer){
-				
+	public Boolean executeMove(Move m, Rule currentRule, Player currentPlayer) throws InterruptedException{
+
 		if(currentRule.checkMove(m)){		
 			m.getSelectedPiece().setSelected(false);
 
@@ -117,19 +117,15 @@ public class CheckerBoard {
 
 				pieces[destinationPoint.x][destinationPoint.y] = p;
 				p.changePosition(destinationPoint.x, destinationPoint.y);
-				
+
 				if(currentRule.canBeMadeToKing(p)) p.makeToKing();
-				
+
 				updatePiecesOnBoard();
 				currentRule.updateCurrentCheckerBoard();
 
 				if(destinationPoints.size() > 1){
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					Thread.sleep(1000);
+
 					Gui.Gui.repaintScreen();
 				}
 			}
@@ -166,7 +162,7 @@ public class CheckerBoard {
 
 				updatePiecesOnBoard();
 			}
-			
+
 			if(currentRule.canBeMadeToKing(p)) p.makeToKing();
 		}
 	}

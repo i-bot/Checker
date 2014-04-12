@@ -1,6 +1,7 @@
 package GuiMenus;
 
 import Engine.MenuHandler;
+import GameEngine.Game;
 import GameEngine.GameEngine;
 import GuiElements.Button;
 import GuiElements.ButtonListener;
@@ -50,8 +51,11 @@ public class GameMenu extends Menu{
 		@Override
 		public void clicked(Button button){
 			if(button instanceof NormalButton){	
+				Game currentGame = gameEngine.getCurrentGame();
+				gameEngine = Main.Main.reloadGameEngine();
+				
 				if(button.getID() == 20){
-					gameEngine.init(gameEngine.getCurrentGame());
+					gameEngine.init(currentGame);
 					gameEngine.start();
 				}
 				MenuHandler.changeMenu(button.getID());

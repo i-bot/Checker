@@ -45,7 +45,7 @@ public class GameEngine extends Thread{
 		return game.getCurrentPlayer(); 
 	} 
 
-	private Boolean handleMouseInput(Point p){
+	private Boolean handleMouseInput(Point p) throws InterruptedException{
 		if(getCurrentPlayer() instanceof RealPlayer){
 			RealPlayer currentPlayer = (RealPlayer) getCurrentPlayer();
 			Piece selectedPiece = checkerBoard.getPiece(p);
@@ -74,7 +74,7 @@ public class GameEngine extends Thread{
 		return false;
 	} 
 
-	private void getAndExecuteNextMove(Player currentPlayer){
+	private void getAndExecuteNextMove(Player currentPlayer) throws InterruptedException{
 		currentPlayer.clear();
 		currentPlayer.setMovesWithJumps(rule.getMovesWithJumps(currentPlayer.getColor_Player()));
 
@@ -90,23 +90,16 @@ public class GameEngine extends Thread{
 
 				Mouse.resetMouseList();
 
-				try {
-					Thread.sleep(50);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				Thread.sleep(50);
 			}
 			currentPlayer.setMovesWithJumps(rule.getMovesWithJumps(currentPlayer.getColor_Player()));
 		}
 		else if(currentPlayer instanceof AIPlayer){
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			long end = System.currentTimeMillis() + 1000;
 			checkerBoard.executeMove(((AIPlayer) currentPlayer).getNextMove(checkerBoard.clone(), rule.clone(), currentPlayer.getColor_Player()), rule, currentPlayer);
+			while(System.currentTimeMillis() < end)
+				Thread.sleep(1);
+			
 		}
 
 		game.changeCurrentPlayer((currentPlayer == game.getPlayer1())? game.getPlayer2() : game.getPlayer1());
@@ -116,7 +109,12 @@ public class GameEngine extends Thread{
 	public void run() {
 		Mouse.resetMouseList();
 
-		while(true)
-			getAndExecuteNextMove(game.getCurrentPlayer());
+		while(!isInterrupted()){
+			try {
+				getAndExecuteNextMove(game.getCurrentPlayer());
+			} catch (InterruptedException e) {
+				interrupt();
+			}
+		}
 	}
 }

@@ -55,6 +55,19 @@ public class Main {
 	}
 	
 	public static GameEngine getGameEngine(){
+		System.out.println("Main.getGameEngine()" + gameEngine);
+		return gameEngine;
+	}
+	
+	public static GameEngine reloadGameEngine(){
+		gameEngine.interrupt();
+		try {
+			gameEngine.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		gameEngine = new GameEngine();
 		return gameEngine;
 	}
 }
