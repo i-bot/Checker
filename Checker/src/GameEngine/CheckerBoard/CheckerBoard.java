@@ -80,6 +80,13 @@ public class CheckerBoard {
 		return darkCapturedPieces;
 	}
 
+	public Color isGameOver(Rule rule, Color color_currentPlayer){
+		Color color_winner = (lightCapturedPieces.size() == 12)? Color.DARK : ((darkCapturedPieces.size() == 12)? Color.LIGHT : null);
+		if(rule.getMovesWithJumps(color_currentPlayer).size() == 0 && rule.getNormalMoves(color_currentPlayer).size() == 0) 
+			color_winner = (color_currentPlayer == Color.DARK)? Color.LIGHT : Color.DARK;
+		return color_winner;
+	}
+
 	public Boolean executeMove(Move m, Rule currentRule, Player currentPlayer) throws InterruptedException{
 
 		if(currentRule.checkMove(m)){		
@@ -123,13 +130,13 @@ public class CheckerBoard {
 				updatePiecesOnBoard();
 				currentRule.updateCurrentCheckerBoard();
 
+				Gui.Gui.repaintScreen();
+
 				if(destinationPoints.size() > 1){
 					Thread.sleep(1000);
-
-					Gui.Gui.repaintScreen();
 				}
 			}
-
+			
 			return true;
 		}
 

@@ -1,5 +1,6 @@
 package GameEngine;
 
+import GameEngine.CheckerBoard.Color;
 import GameEngine.Player.Player;
 
 public class Game {
@@ -43,6 +44,10 @@ public class Game {
 	
 	public Player getCurrentPlayer() {
 		return currentPlayer;
+	}
+	
+	public Player getPlayerByColor(Color color){
+		return (player1.getColor_Player() == color)? player1 : ((player2.getColor_Player() == color)? player2 : null);
 	}
 	
 	public enum GameType{

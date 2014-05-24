@@ -63,6 +63,6 @@ public abstract class Button extends GuiElement{
 	}
 
 	public Boolean isClicked(MousePoint point){
-		return r.contains(new Point(point.getX(), point.getY()));
+		return r.contains(new Point(point.getX(), point.getY())) && visible;
 	}
 }

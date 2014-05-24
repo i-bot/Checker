@@ -42,10 +42,10 @@ public class Gui extends JFrame{
 	public void makeCanvasAndBufferStrategy(){
 		canvas = new Canvas();
 		canvas.setBounds(0, 0, Settings.Settings.getWindowDimension().width, Settings.Settings.getWindowDimension().height);
-		addListeners();
 		this.add(canvas);
 		canvas.createBufferStrategy(2);
 		bufferStrategy = canvas.getBufferStrategy();
+		addListeners();
 
 		repaintScreen();
 		repainterThread.start();

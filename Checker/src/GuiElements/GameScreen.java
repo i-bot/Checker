@@ -16,7 +16,7 @@ import KeyInput.MousePoint;
 public class GameScreen extends Button {
 
 	private GameEngine gameEngine;
-	
+
 	private int t_x, t_y;
 	private Rectangle board;
 	private CheckerBoard checkerBoard;
@@ -48,14 +48,14 @@ public class GameScreen extends Button {
 		guiElements.add(darkPlayer_name);
 		guiElements.add(currentPlayerLabel);
 	}
-	
+
 	public void setGameEngine(GameEngine gameEngine){
 		this.gameEngine = gameEngine;
 	}
 
 	public void update(){
 		checkerBoard = gameEngine.getCurrentCheckerBoard();
-		
+
 		lightPlayer_name.setText(gameEngine.getCurrentGame().getPlayer1().getName());
 		darkPlayer_name.setText(gameEngine.getCurrentGame().getPlayer2().getName());
 
@@ -63,8 +63,11 @@ public class GameScreen extends Button {
 	}
 
 	public void updateCurrentPlayerLabel(){
-		Player currentPlayer = gameEngine.getCurrentPlayer();
-		currentPlayerLabel.setText("It's your turn " + currentPlayer.getName() + " (" + ((currentPlayer == gameEngine.getCurrentGame().getPlayer1())? "light" : "dark") + ")");
+		if(!gameEngine.isGameOver()){
+			Player currentPlayer = gameEngine.getCurrentPlayer();
+			currentPlayerLabel.setText("It's your turn " + currentPlayer.getName() + " (" + ((currentPlayer == gameEngine.getCurrentGame().getPlayer1())? "light" : "dark") + ")");
+		}
+		else currentPlayerLabel.setText(gameEngine.getWinner().getName() + " has won!");
 	}
 
 	private void setT_Point(int x, int y){
@@ -75,17 +78,17 @@ public class GameScreen extends Button {
 	public Boolean isClicked(MousePoint point){
 		return false;
 	}
-	
+
 	public Point convert(MousePoint point){
 		return new Point((point.getX() - board.x) / Scaler.scale(100), (point.getY() - board.y) / Scaler.scale(100));
 	}
-	
+
 	public Boolean contains(MousePoint point){
 		return board.contains(point.toPoint());
 	}
 
 	@Override
-	public void drawMe(Graphics g) {
+	public void drawMe(Graphics g) {		
 		for(GuiElement ge : guiElements) ge.drawMe(g);
 
 		for(Piece p : checkerBoard.getPiecesOnBoard()) 
@@ -96,12 +99,11 @@ public class GameScreen extends Button {
 				Piece p = checkerBoard.getLightCapturedPieces().get(i);
 				(new Image(t_x + 10 + 100 * x, t_y + 60 + 100 * y, p.getPiece_Icon())).drawMe(g);
 			}
-		
+
 		for(int y = 0, i = 0; y < 6 && i < checkerBoard.getDarkCapturedPieces().size(); y++)
 			for(int x = 0; x < 2 && i < checkerBoard.getDarkCapturedPieces().size(); x++, i++){
 				Piece p = checkerBoard.getDarkCapturedPieces().get(i);
 				(new Image(t_x + 1040 + 100 * x, t_y + 60 + 100 * y, p.getPiece_Icon())).drawMe(g);
 			}
 	}
-
 }

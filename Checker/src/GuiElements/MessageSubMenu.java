@@ -10,9 +10,9 @@ import Languages.Languages;
 
 public class MessageSubMenu extends Button{
 	protected Color edgeColor, centreColor;
-	protected MousePoint lastPoint;
 	protected ArrayList<GuiElement> guiElements;
 	protected String text;
+	private Button ok_Button;
 
 	public MessageSubMenu(int id, String title, TitleOrientation orientation) {
 		super(id, title, orientation);	
@@ -25,7 +25,8 @@ public class MessageSubMenu extends Button{
 		
 		guiElements = new ArrayList<GuiElement>();
 		guiElements.add(new Label(text, orientation, x + 20, y + 20, width - 40, height - 90));
-		guiElements.add(new NormalButton(16, Languages.getButtonAndMenuTitle(16), TitleOrientation.MID, (int) (x + (width - 100) / 2), y + height - 70, 100, 50, 255, 255, 0));
+		ok_Button = new NormalButton(16, Languages.getButtonAndMenuTitle(16), TitleOrientation.MID, (int) (x + (width - 100) / 2), y + height - 70, 100, 50, 255, 255, 0);
+		guiElements.add(ok_Button);
 	}
 
 	public void setBounds(int x, int y, int width, int height){
@@ -71,14 +72,7 @@ public class MessageSubMenu extends Button{
 	}
 	
 	public Boolean isClicked(MousePoint point){
-		lastPoint=point;
-		return getIDFromClickedButton() == 16;
+		return ok_Button.isClicked(point);
 	}
 	
-	public int getIDFromClickedButton(){
-		if(guiElements.get(1) instanceof Button){
-			if(((Button)guiElements.get(1)).isClicked(lastPoint))return ((Button)guiElements.get(1)).getID();
-		}
-		return 0;
-	}
 }

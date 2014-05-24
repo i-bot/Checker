@@ -30,11 +30,11 @@ public class Label extends GuiElement{
 		if(visible){
 			for(int z = 0; z < computeLines().size(); z++){
 				ArrayList<BufferedImage> chars = myChars.myChars.getMyChars(computeLines().get(z));
+				int orientation_x = getOrientation_X(orientation, chars.size());
 				for(int i = 0; i < chars.size(); i++){
 					BufferedImage img = chars.get(i);
-					if(img != null){
-						g.drawImage(img, x + getOrientationX(orientation, chars) + img.getWidth() * i, y + img.getHeight() * z, null);
-					}
+					if(img != null)
+						g.drawImage(img, x + orientation_x + img.getWidth() * i, y + img.getHeight() * z, null);
 				}
 			}
 		}
@@ -45,23 +45,27 @@ public class Label extends GuiElement{
 		ArrayList<String> strings = new ArrayList<String>();
 		for(int t_y = 0, i = 0; t_y < height; t_y += Scaler.scale(30)){
 			String s = "";
+			Boolean beginning = true;
 			for(int x = 0; i<segments.length; i++){
-				x+=(segments[i].length()+1)*Scaler.scale(15);
-				if(!(x<=(width+Scaler.scale(15)))){
+				x += segments[i].length() * Scaler.scale(15);
+				if(!(x <= width)){
 					break;
 				}
-				s+=segments[i]+" ";
+				s += ((!beginning)? " " : "") + segments[i];
+				beginning = false;
 			}
 			strings.add(s);
 		}
 		return strings;
 	}
+	
+	
 
-	protected Integer getOrientationX(TitleOrientation orientation, ArrayList<BufferedImage> chars){
-		int orientation_X = Scaler.scale(15);
+	protected Integer getOrientation_X(TitleOrientation orientation, int n_chars){
+		int orientation_x = Scaler.scale(15);
 		if(orientation == TitleOrientation.LEFT)return 0;
-		else if(orientation == TitleOrientation.MID)return (width - chars.size() * orientation_X) / 2;
-		else if(orientation == TitleOrientation.RIGHT)return (width - chars.size() * orientation_X);
+		else if(orientation == TitleOrientation.MID)return (width - n_chars * orientation_x) / 2;
+		else if(orientation == TitleOrientation.RIGHT)return (width - n_chars * orientation_x);
 		else return 0;
 	}
 }

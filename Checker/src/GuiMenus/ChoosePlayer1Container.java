@@ -16,7 +16,7 @@ public class ChoosePlayer1Container extends Container {
 		
 		add(new NormalButton(17, "Real Player", TitleOrientation.MID, 360, 105, 285, 50, 255, 255, 0));
 		
-		tf = new TextField(665, 105, 895, 50, TextField.Trigger.TRIGGER_ON_ENTER);
+		tf = new TextField(665, 105, 190, 50, TextField.Trigger.TRIGGER_ON_ENTER);
 		tf.setEdgeColor(127, 127, 127);
 		tf.setCentreColorUnselected(195, 195, 195);
 		tf.setCentreColorSelected(255, 255, 0);

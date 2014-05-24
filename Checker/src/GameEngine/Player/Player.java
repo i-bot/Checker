@@ -2,8 +2,10 @@ package GameEngine.Player;
 
 import java.util.ArrayList;
 
+import GameEngine.CheckerBoard.CheckerBoard;
 import GameEngine.CheckerBoard.Color;
 import GameEngine.CheckerBoard.Move;
+import GameEngine.GameRules.Rule;
 
 public abstract class Player {
 	
@@ -13,6 +15,8 @@ public abstract class Player {
 	
 	public abstract void clear();
 	public abstract Boolean containsMove(Move m);
+	public abstract void executeNextMove(CheckerBoard checkerBoard, Rule rule, Player enemy) throws InterruptedException;
+	public abstract void handleEnemyMove(Move move_enemy);
 	
 	public Player(Color color_player){
 		this.color_player = color_player;

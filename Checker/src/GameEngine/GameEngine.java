@@ -1,107 +1,50 @@
 package GameEngine;
 
-import java.awt.Point;
-
-import Engine.MenuHandler;
 import GameEngine.CheckerBoard.CheckerBoard;
-import GameEngine.CheckerBoard.Move;
-import GameEngine.CheckerBoard.Piece;
 import GameEngine.GameRules.DefaultRule;
 import GameEngine.GameRules.Rule;
 import GameEngine.Player.AIPlayer;
 import GameEngine.Player.Player;
-import GameEngine.Player.RealPlayer;
 import KeyInput.Mouse;
-import KeyInput.MousePoint;
 
 public class GameEngine extends Thread{
 
-	private static Game game;
-	private static Rule rule;
-	private static CheckerBoard checkerBoard;
+	private Game game;
+	private Rule rule;
+	private CheckerBoard checkerBoard;
+	private Boolean gameOver;
 
 	public void init(Game game){
-		GameEngine.game = game;
+		this.game = game;
 		game.changeCurrentPlayer(game.getPlayer1());
 		checkerBoard = new CheckerBoard();
 		rule = new DefaultRule(checkerBoard);
+		gameOver = false;
+		
 		if(game.getPlayer1() instanceof AIPlayer && !((AIPlayer) game.getPlayer1()).load()) System.err.println(game.getPlayer1() + " didn't load a valid AI");
 		if(game.getPlayer2() instanceof AIPlayer && !((AIPlayer) game.getPlayer2()).load()) System.err.println(game.getPlayer2() + " didn't load a valid AI");	
 	}
 
-	public Game getCurrentGame(){
+	public synchronized Game getCurrentGame(){
 		return game;
 	}
 
-	public Rule getCurrentRule(){
+	public synchronized Rule getCurrentRule(){
 		return rule;
 	}
 
-	public CheckerBoard getCurrentCheckerBoard(){
+	public synchronized CheckerBoard getCurrentCheckerBoard(){
 		return checkerBoard;
 	}
 
-	public Player getCurrentPlayer(){
+	public synchronized Player getCurrentPlayer(){
 		return game.getCurrentPlayer(); 
 	} 
 
-	private Boolean handleMouseInput(Point p) throws InterruptedException{
-		if(getCurrentPlayer() instanceof RealPlayer){
-			RealPlayer currentPlayer = (RealPlayer) getCurrentPlayer();
-			Piece selectedPiece = checkerBoard.getPiece(p);
-			Move currentMove = null;
-			if(selectedPiece != null && selectedPiece.getPieceColor() == currentPlayer.getColor_Player() && currentPlayer.canChangeSelectedPiece())
-				currentPlayer.handleSelecetedPiece(selectedPiece);
-			else if(selectedPiece == null && currentPlayer.hasPieceSelected())
-				currentMove = currentPlayer.handleDestinationPoint(p);
-
-			if(currentMove != null){
-				Boolean normalMove = rule.isNormalMove(currentMove);
-				if(checkerBoard.executeMove(currentMove, rule, currentPlayer)){
-					currentPlayer.clear();
-					if(rule.canJump(currentMove.getSelectedPiece()) && !normalMove){
-						currentPlayer.setSelectedPieceForMultipleJumps(currentMove.getSelectedPiece());
-						currentPlayer.setMovesWithJumps(rule.getMovesWithJumps(currentMove.getSelectedPiece()));
-					}
-					else {	
-						return true;
-					}
-				}
-			}
-		}
-
-		Gui.Gui.repaintScreen();
-		return false;
-	} 
-
-	private void getAndExecuteNextMove(Player currentPlayer) throws InterruptedException{
-		currentPlayer.clear();
-		currentPlayer.setMovesWithJumps(rule.getMovesWithJumps(currentPlayer.getColor_Player()));
-
-		Gui.Gui.repaintScreen();
-
-		if(currentPlayer instanceof RealPlayer){
-			Boolean realPlayerExecutedMove = false;
-
-			while(!realPlayerExecutedMove){
-				for(MousePoint mp : Mouse.getMouseList())
-					if(MenuHandler.getGameMenu().getGameScreen().contains(mp))
-						realPlayerExecutedMove = handleMouseInput(MenuHandler.getGameMenu().getGameScreen().convert(mp));
-
-				Mouse.resetMouseList();
-
-				Thread.sleep(50);
-			}
-			currentPlayer.setMovesWithJumps(rule.getMovesWithJumps(currentPlayer.getColor_Player()));
-		}
-		else if(currentPlayer instanceof AIPlayer){
-			long end = System.currentTimeMillis() + 1000;
-			checkerBoard.executeMove(((AIPlayer) currentPlayer).getNextMove(checkerBoard.clone(), rule.clone(), currentPlayer.getColor_Player()), rule, currentPlayer);
-			while(System.currentTimeMillis() < end)
-				Thread.sleep(1);
-			
-		}
-
+	private void handleNextMove(Player currentPlayer) throws InterruptedException{
+		long start = System.currentTimeMillis();
+		currentPlayer.executeNextMove(checkerBoard, rule, (currentPlayer == game.getPlayer1())? game.getPlayer2() : game.getPlayer1());
+		System.out.println("GameEngine.handleNextMove()" + (System.currentTimeMillis() - start));
 		game.changeCurrentPlayer((currentPlayer == game.getPlayer1())? game.getPlayer2() : game.getPlayer1());
 	}
 
@@ -109,12 +52,22 @@ public class GameEngine extends Thread{
 	public void run() {
 		Mouse.resetMouseList();
 
-		while(!isInterrupted()){
+		while(!isInterrupted() && !gameOver){
 			try {
-				getAndExecuteNextMove(game.getCurrentPlayer());
+				handleNextMove(game.getCurrentPlayer());
+				Gui.Gui.repaintScreen();
+				gameOver = isGameOver();
 			} catch (InterruptedException e) {
 				interrupt();
 			}
 		}
+	}
+	
+	public synchronized Boolean isGameOver(){
+		return checkerBoard.isGameOver(rule, game.getCurrentPlayer().getColor_Player()) != null;
+	}
+	
+	public synchronized Player getWinner(){
+		return game.getPlayerByColor(checkerBoard.isGameOver(rule, game.getCurrentPlayer().getColor_Player()));
 	}
 }

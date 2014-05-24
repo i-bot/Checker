@@ -39,7 +39,7 @@ public class AIPlayer extends Player{
 
 		System.out.println("AIPlayer.load(): " + ai.getAI_Location());
 		System.out.println("AIPlayer.load(): " + ai.getClass_Location());
-		
+
 		try {
 			@SuppressWarnings("resource")
 			URLClassLoader ucl = new URLClassLoader(new URL[] { file.toURI().toURL() });
@@ -54,10 +54,10 @@ public class AIPlayer extends Player{
 			e.printStackTrace();
 			return false;
 		} 
-		
+
 		return true;
 	}
-	
+
 	public Move getNextMove(CheckerBoard checkerBoard, Rule rule, Color color){
 		try {
 			return (Move) method.invoke(loaded.newInstance(), checkerBoard, rule, color);
@@ -65,10 +65,10 @@ public class AIPlayer extends Player{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
+
 	public void clear(){
 		movesWithJumps = new ArrayList<>();
 	}
@@ -78,7 +78,29 @@ public class AIPlayer extends Player{
 		for(Move moveFromList : movesWithJumps)
 			if(moveFromList.equals(m))
 				return true;
-		
+
 		return movesWithJumps.size() == 0;
+	}
+
+	@Override
+	public void executeNextMove(CheckerBoard checkerBoard, Rule rule, Player enemy) throws InterruptedException {
+		long end = System.currentTimeMillis() + 1000;
+		Move aiMove = getNextMove(checkerBoard.clone(), rule.clone(), this.getColor_Player());
+		while(System.currentTimeMillis() < end)
+			Thread.sleep(1);
+		if(checkerBoard.executeMove(aiMove, rule, this))
+			enemy.handleEnemyMove(aiMove);
+		else checkerBoard.executeMove(getRandomMove(rule), rule, this);
+	}
+	
+	private Move getRandomMove(Rule rule){
+		ArrayList<Move> allPossibleMoves = rule.getMovesWithJumps(color_player);
+		allPossibleMoves.addAll(rule.getNormalMoves(color_player));
+		return allPossibleMoves.get((int) (Math.random() * allPossibleMoves.size()));
+	}
+
+	@Override
+	public void handleEnemyMove(Move move_enemy) {
+
 	}
 }
