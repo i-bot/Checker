@@ -10,11 +10,13 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
+import VariableLocker.VariableLocker;
+
 @SuppressWarnings("serial")
 public class Gui extends JFrame{
 	private static BufferStrategy bufferStrategy;
 	private static Canvas canvas;
-	public static Boolean hasLoaded = false;
+	public static VariableLocker<Boolean> hasLoaded = new VariableLocker<Boolean>(false);
 	static BufferedImage background;
 	static Thread repainterThread;
 	
@@ -52,7 +54,7 @@ public class Gui extends JFrame{
 		repaintScreen();
 	}
 	
-	public static void repaintScreen(){
+	public synchronized static void repaintScreen(){
 		Graphics g = bufferStrategy.getDrawGraphics();
 		draw(g);
 		g.dispose();
@@ -60,7 +62,7 @@ public class Gui extends JFrame{
 	}
 	
 	private static void draw(Graphics g){
-		if(!hasLoaded)g.drawImage(background, 0, 0, null);
+		if(!hasLoaded.get())g.drawImage(background, 0, 0, null);
 		else Engine.MenuHandler.drawMe(g);
 	}
 	

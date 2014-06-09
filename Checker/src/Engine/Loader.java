@@ -27,7 +27,7 @@ public class Loader implements Runnable{
 			e.printStackTrace();
 		}
 		
-		Gui.hasLoaded = true;
+		Gui.hasLoaded.set(true);
 		Gui.repaintScreen();
 	}
 }

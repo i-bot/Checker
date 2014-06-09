@@ -13,14 +13,12 @@ public class GameEngine extends Thread{
 	private Game game;
 	private Rule rule;
 	private CheckerBoard checkerBoard;
-	private Boolean gameOver;
 
 	public void init(Game game){
 		this.game = game;
 		game.changeCurrentPlayer(game.getPlayer1());
 		checkerBoard = new CheckerBoard();
 		rule = new DefaultRule(checkerBoard);
-		gameOver = false;
 		
 		if(game.getPlayer1() instanceof AIPlayer && !((AIPlayer) game.getPlayer1()).load()) System.err.println(game.getPlayer1() + " didn't load a valid AI");
 		if(game.getPlayer2() instanceof AIPlayer && !((AIPlayer) game.getPlayer2()).load()) System.err.println(game.getPlayer2() + " didn't load a valid AI");	
@@ -55,11 +53,10 @@ public class GameEngine extends Thread{
 	public void run() {
 		Mouse.resetMouseList();
 
-		while(!isInterrupted() && !gameOver){
+		while(!isInterrupted() && !isGameOver()){
 			try {
 				handleNextMove(game.getCurrentPlayer());
 				Gui.Gui.repaintScreen();
-				gameOver = isGameOver();
 			} catch (InterruptedException e) {
 				interrupt();
 			}
