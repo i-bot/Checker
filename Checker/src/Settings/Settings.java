@@ -8,9 +8,10 @@ import java.util.Formatter;
 import java.util.Scanner;
 
 public class Settings {
-	static ArrayList<String> settings;
-	static String path, language, ais_path, graphics_path;
-	static Dimension windowDimension;
+	private static ArrayList<String> settings;
+	private static String path, language, ais_path, graphics_path, game_path;
+	private static Dimension windowDimension;
+	private static int ai_min_time, ai_max_time;
 	
 	public static void readSettings(String path){
 		Settings.path = path;
@@ -35,6 +36,9 @@ public class Settings {
 		windowDimension = new Dimension(Integer.parseInt(settings.get(1).substring(0, settings.get(1).indexOf(":"))), Integer.parseInt(settings.get(1).substring(settings.get(1).indexOf(":")+1)));
 		ais_path = path + settings.get(2);
 		graphics_path = path + settings.get(3);
+		game_path = path + settings.get(4);
+		ai_min_time = Integer.parseInt(settings.get(5));
+		ai_max_time = Integer.parseInt(settings.get(6));
 	}
 
 	public static String getLanguage(){
@@ -45,7 +49,7 @@ public class Settings {
 		return windowDimension;
 	}
 	
-	public static String getWorlds_Path(){
+	public static String getAIs_Path(){
 		return ais_path;
 	}
 	
@@ -53,11 +57,23 @@ public class Settings {
 		return graphics_path;
 	}
 	
+	public static String getGame_Path(){
+		return game_path;
+	}
+	
+	public static int getAI_Min_Time(){
+		return ai_min_time;
+	}
+	
+	public static int getAI_Max_Time(){
+		return ai_max_time;
+	}
+	
 	public static void changeSetting(int index, String newSetting){
 		File file = new File(path+"/Settings/Settings.txt");
 		Formatter formatter = null;
 
-		if (file.exists())file.delete();
+		if(file.exists()) file.delete();
 
 		try {formatter = new Formatter(file.getPath());} 
 		catch (FileNotFoundException e) {e.printStackTrace();}

@@ -21,7 +21,7 @@ public class AIs {
 	private static void readAIs(){	
 		filepaths = new ArrayList<String>();
 		
-		ais_file = new File(Settings.Settings.getWorlds_Path());
+		ais_file = new File(Settings.Settings.getAIs_Path());
 
 		Scanner scanner = null;
 		try {scanner = new Scanner(ais_file);} 

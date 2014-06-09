@@ -4,7 +4,6 @@ import GameEngine.CheckerBoard.CheckerBoard;
 import GameEngine.CheckerBoard.Move;
 import GameEngine.GameRules.DefaultRule;
 import GameEngine.GameRules.Rule;
-import GameEngine.Player.AIPlayer;
 import GameEngine.Player.Player;
 import KeyInput.Mouse;
 
@@ -19,9 +18,6 @@ public class GameEngine extends Thread{
 		game.changeCurrentPlayer(game.getPlayer1());
 		checkerBoard = new CheckerBoard();
 		rule = new DefaultRule(checkerBoard);
-		
-		if(game.getPlayer1() instanceof AIPlayer && !((AIPlayer) game.getPlayer1()).load()) System.err.println(game.getPlayer1() + " didn't load a valid AI");
-		if(game.getPlayer2() instanceof AIPlayer && !((AIPlayer) game.getPlayer2()).load()) System.err.println(game.getPlayer2() + " didn't load a valid AI");	
 	}
 
 	public synchronized Game getCurrentGame(){

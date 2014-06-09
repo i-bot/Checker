@@ -1,7 +1,6 @@
 package GameEngine.Player;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -20,6 +19,7 @@ public class AIPlayer extends Player{
 	private Method method;
 	private Class<AI_Interface> loaded;
 	private AI ai;
+	private AIMoveGetter aiMoveGetter;
 
 	public AIPlayer(AI ai, Color color_player) {
 		super(color_player);
@@ -28,6 +28,8 @@ public class AIPlayer extends Player{
 		this.loaded = null;
 		name = ai.getName();
 		method = null;
+
+		aiMoveGetter = new AIMoveGetter();
 	}
 
 	public AI getAI(){
@@ -58,18 +60,44 @@ public class AIPlayer extends Player{
 		return true;
 	}
 
-	public Move getNextMove(CheckerBoard checkerBoard, Rule rule, Color color){
+	public Move getNextMove(CheckerBoard checkerBoard, Rule rule, Color color) throws InterruptedException{
+		Move ai_move = null;
+		long end_min_time = System.currentTimeMillis() + Settings.Settings.getAI_Min_Time();
+		long end_max_time = System.currentTimeMillis() + Settings.Settings.getAI_Max_Time();
+
 		try {
-			return (Move) method.invoke(loaded.newInstance(), checkerBoard, rule, color);
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			loaded.newInstance();
+		} catch (InstantiationException | IllegalAccessException e1) {
 			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		try {
+			aiMoveGetter.init(method, loaded.newInstance(), checkerBoard, rule, color);
+		} 
+		catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
+		Thread thread = new Thread(aiMoveGetter);
 
-		return null;
+		thread.start();
+		while(System.currentTimeMillis() < end_min_time)
+			Thread.sleep(1);
+		ai_move = aiMoveGetter.getAIMove();
+		
+		while(end_max_time > System.currentTimeMillis() && ai_move == null){
+			ai_move = aiMoveGetter.getAIMove();
+			Thread.sleep(1);
+		}
+		ai_move = aiMoveGetter.getAIMove();
+				
+		thread.interrupt();
+		thread.join();
+
+		return ai_move;
 	}
 
-	public void clear(){
+	public void clear() {
 		movesWithJumps = new ArrayList<>();
 	}
 
@@ -84,17 +112,13 @@ public class AIPlayer extends Player{
 
 	@Override
 	public Move getAndExecuteNextMove(CheckerBoard checkerBoard, Rule rule) throws InterruptedException {
-		long end = System.currentTimeMillis() + 1000;
 		Move aiMove = getNextMove(checkerBoard.clone(), rule.clone(), this.getColor_Player());
-		while(System.currentTimeMillis() < end)
-			Thread.sleep(1);
-	
-		Move t_aiMove = aiMove.clone();
 		
-		if(!rule.checkMove(aiMove))
+		if(aiMove == null || !rule.checkMove(aiMove))
 			aiMove = getRandomMove(rule);
-		else checkerBoard.executeMove(aiMove, rule, this);
 		
+		Move t_aiMove = aiMove.clone();
+		checkerBoard.executeMove(aiMove, rule, this);
 		return t_aiMove;
 	}
 

@@ -56,6 +56,7 @@ public class GameMenu extends Menu{
 				
 				if(button.getID() == 20){
 					gameEngine.init(currentGame);
+					gameScreen.setGameEngine(gameEngine);
 					gameEngine.start();
 				}
 				MenuHandler.changeMenu(button.getID());

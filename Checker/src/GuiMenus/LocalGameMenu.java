@@ -56,8 +56,10 @@ public class LocalGameMenu extends Menu{
 			if(button != null && button.getID() == 17){
 				if(button instanceof NormalButton)
 					player1 = new RealPlayer(((ChoosePlayer1Container) choosePlayer1Container).getRealPlayerName(), Color.LIGHT);
-				if(button instanceof AIButton)
+				if(button instanceof AIButton){
 					player1 = new AIPlayer(((AIButton) button).getAI(), Color.LIGHT);
+					((AIPlayer) player1).load();
+				}
 
 				choosePlayer1Container.setVisible(false);
 				choosePlayer2Container.setVisible(true);
@@ -67,8 +69,10 @@ public class LocalGameMenu extends Menu{
 			else if(button != null && button.getID() == 18){
 				if(button instanceof NormalButton)
 					player2 = new RealPlayer(((ChoosePlayer2Container) choosePlayer2Container).getRealPlayerName(), Color.DARK);
-				if(button instanceof AIButton)
+				if(button instanceof AIButton){
 					player2 = new AIPlayer(((AIButton) button).getAI(), Color.DARK);
+					((AIPlayer) player2).load();
+				}
 
 				choosePlayer1Container.setVisible(true);
 				choosePlayer2Container.setVisible(false);
