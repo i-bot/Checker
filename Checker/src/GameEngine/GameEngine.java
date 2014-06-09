@@ -1,6 +1,7 @@
 package GameEngine;
 
 import GameEngine.CheckerBoard.CheckerBoard;
+import GameEngine.CheckerBoard.Move;
 import GameEngine.GameRules.DefaultRule;
 import GameEngine.GameRules.Rule;
 import GameEngine.Player.AIPlayer;
@@ -41,11 +42,13 @@ public class GameEngine extends Thread{
 		return game.getCurrentPlayer(); 
 	} 
 
-	private void handleNextMove(Player currentPlayer) throws InterruptedException{
-		long start = System.currentTimeMillis();
-		currentPlayer.executeNextMove(checkerBoard, rule, (currentPlayer == game.getPlayer1())? game.getPlayer2() : game.getPlayer1());
-		System.out.println("GameEngine.handleNextMove()" + (System.currentTimeMillis() - start));
+	private void handleNextMove(Player currentPlayer) throws InterruptedException{		
+		currentPlayer.setMovesWithJumps(rule.getMovesWithJumps(currentPlayer.getColor_Player()));
+		Move m = currentPlayer.getAndExecuteNextMove(checkerBoard, rule);
+		
+		Move t_m = m.clone();
 		game.changeCurrentPlayer((currentPlayer == game.getPlayer1())? game.getPlayer2() : game.getPlayer1());
+		getCurrentPlayer().handleEnemyMove(t_m);
 	}
 
 	@Override

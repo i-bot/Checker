@@ -15,12 +15,13 @@ import KeyInput.MousePoint;
 public class RealPlayer extends Player{
 
 	private Piece selectedPiece;
-	private Move currentMove;
+	private Move t_Move;
 	private Boolean canChangeSelectedPiece;
 
 	public RealPlayer(String name, Color color_player) {
 		super(color_player);
 		this.name = name;
+		t_Move = null;
 
 		clear();
 	}
@@ -42,12 +43,7 @@ public class RealPlayer extends Player{
 	}
 
 	public Move handleDestinationPoint(Point destinationPoint){
-		currentMove = new Move(selectedPiece, destinationPoint);
-		return currentMove;
-	}
-
-	public Move getCurrentMove(){
-		return currentMove;
+		return new Move(selectedPiece, destinationPoint);
 	}
 
 	public Boolean hasPieceSelected(){
@@ -71,7 +67,6 @@ public class RealPlayer extends Player{
 
 	public void clear(){
 		unselectPiece();
-		currentMove = null;
 		movesWithJumps = new ArrayList<>();
 	}
 
@@ -85,21 +80,25 @@ public class RealPlayer extends Player{
 	}
 
 	@Override
-	public void executeNextMove(CheckerBoard checkerBoard, Rule rule, Player enemy) throws InterruptedException {
-		Boolean executedMove = false;
+	public Move getAndExecuteNextMove(CheckerBoard checkerBoard, Rule rule) throws InterruptedException {
+		t_Move = null;
+		Boolean finished = false;
 
-		while(!executedMove){
+		while(!finished){
 			for(MousePoint mp : Mouse.getMouseList())
 				if(MenuHandler.getGameMenu().getGameScreen().contains(mp))
-					executedMove = handleMouseInput(MenuHandler.getGameMenu().getGameScreen().convert(mp), checkerBoard, rule, enemy);
+					finished = handleMouseInput(MenuHandler.getGameMenu().getGameScreen().convert(mp), checkerBoard, rule);
 
 			Mouse.resetMouseList();
 
 			Thread.sleep(50);
-		}		
+		}
+
+		System.out.println("RealPlayer.getNextMove()" + t_Move);
+		return t_Move;
 	}
 
-	private Boolean handleMouseInput(Point p, CheckerBoard checkerBoard, Rule rule, Player enemy) throws InterruptedException{
+	private Boolean handleMouseInput(Point p, CheckerBoard checkerBoard, Rule rule) throws InterruptedException{
 		Piece clickedPiece = checkerBoard.getPiece(p);
 		Move currentMove = null;
 		if(clickedPiece != null && clickedPiece.getPieceColor() == color_player && canChangeSelectedPiece())
@@ -107,19 +106,20 @@ public class RealPlayer extends Player{
 		else if(clickedPiece == null && hasPieceSelected())
 			currentMove = handleDestinationPoint(p);
 
-		if(currentMove != null){
+		if(currentMove != null && rule.checkMove(currentMove)){
 			Boolean normalMove = rule.isNormalMove(currentMove);
-			if(checkerBoard.executeMove(currentMove, rule, this)){
-				clear();
-				enemy.handleEnemyMove(currentMove);
-				if(rule.canJump(currentMove.getSelectedPiece()) && !normalMove){
-					setSelectedPieceForMultipleJumps(currentMove.getSelectedPiece());
-					setMovesWithJumps(rule.getMovesWithJumps(currentMove.getSelectedPiece()));
-				}
-				else {	
-					return true;
-				}
+			
+			if(t_Move == null) t_Move = currentMove.clone();
+			else t_Move.getDestinationPoints().add(currentMove.getDestinationPoints().get(currentMove.getDestinationPoints().size() - 1));
+			
+			checkerBoard.executeMove(currentMove, rule, this);
+			clear();
+			
+			if(rule.canJump(currentMove.getSelectedPiece()) && !normalMove){
+				setSelectedPieceForMultipleJumps(currentMove.getSelectedPiece());
+				setMovesWithJumps(rule.getMovesWithJumps(currentMove.getSelectedPiece()));
 			}
+			else return true;
 		}
 
 		Gui.Gui.repaintScreen();
@@ -128,6 +128,6 @@ public class RealPlayer extends Player{
 
 	@Override
 	public void handleEnemyMove(Move move_enemy) {
-		System.out.println("RealPlayer.handleEnemyMove()");
+		System.out.println("RealPlayer.handleEnemyMove(): Enemy made this move: " + move_enemy);
 	}
 }

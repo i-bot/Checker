@@ -15,7 +15,7 @@ public abstract class Player {
 	
 	public abstract void clear();
 	public abstract Boolean containsMove(Move m);
-	public abstract void executeNextMove(CheckerBoard checkerBoard, Rule rule, Player enemy) throws InterruptedException;
+	public abstract Move getAndExecuteNextMove(CheckerBoard checkerBoard, Rule rule) throws InterruptedException;
 	public abstract void handleEnemyMove(Move move_enemy);
 	
 	public Player(Color color_player){
@@ -24,6 +24,7 @@ public abstract class Player {
 	}
 
 	public void setMovesWithJumps(ArrayList<Move> movesWithJumps){
+		System.out.println("Player.setMovesWithJumps()" + movesWithJumps.size());
 		this.movesWithJumps = movesWithJumps;
 	}
 
@@ -37,5 +38,11 @@ public abstract class Player {
 	
 	public Color getColor_Player(){
 		return color_player;
+	}
+
+	public Move getRandomMove(Rule rule){
+		ArrayList<Move> allPossibleMoves = rule.getMovesWithJumps(color_player);
+		allPossibleMoves.addAll(rule.getNormalMoves(color_player));
+		return allPossibleMoves.get((int) (Math.random() * allPossibleMoves.size()));
 	}
 }

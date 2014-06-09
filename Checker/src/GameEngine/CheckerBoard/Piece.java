@@ -101,4 +101,8 @@ public class Piece{
 	public enum PieceType {
 		MAN, KING;
 	}
+
+	public void changePosition(Point p) {
+		position = p;
+	}
 }

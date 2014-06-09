@@ -83,24 +83,23 @@ public class AIPlayer extends Player{
 	}
 
 	@Override
-	public void executeNextMove(CheckerBoard checkerBoard, Rule rule, Player enemy) throws InterruptedException {
+	public Move getAndExecuteNextMove(CheckerBoard checkerBoard, Rule rule) throws InterruptedException {
 		long end = System.currentTimeMillis() + 1000;
 		Move aiMove = getNextMove(checkerBoard.clone(), rule.clone(), this.getColor_Player());
 		while(System.currentTimeMillis() < end)
 			Thread.sleep(1);
-		if(checkerBoard.executeMove(aiMove, rule, this))
-			enemy.handleEnemyMove(aiMove);
-		else checkerBoard.executeMove(getRandomMove(rule), rule, this);
-	}
 	
-	private Move getRandomMove(Rule rule){
-		ArrayList<Move> allPossibleMoves = rule.getMovesWithJumps(color_player);
-		allPossibleMoves.addAll(rule.getNormalMoves(color_player));
-		return allPossibleMoves.get((int) (Math.random() * allPossibleMoves.size()));
+		Move t_aiMove = aiMove.clone();
+		
+		if(!rule.checkMove(aiMove))
+			aiMove = getRandomMove(rule);
+		else checkerBoard.executeMove(aiMove, rule, this);
+		
+		return t_aiMove;
 	}
 
 	@Override
 	public void handleEnemyMove(Move move_enemy) {
-
+		System.out.println("AIPlayer.handleEnemyMove(): Enemy made this move: " + move_enemy);
 	}
 }
