@@ -112,7 +112,7 @@ public class AIPlayer extends Player{
 
 	@Override
 	public Move getAndExecuteNextMove(CheckerBoard checkerBoard, Rule rule) throws InterruptedException {
-		Move aiMove = getNextMove(checkerBoard.clone(), rule.clone(), this.getColor_Player());
+		Move aiMove = getNextMove(checkerBoard.clone(), rule.clone(), getColor());
 		
 		if(aiMove == null || !rule.checkMove(aiMove))
 			aiMove = getRandomMove(rule);

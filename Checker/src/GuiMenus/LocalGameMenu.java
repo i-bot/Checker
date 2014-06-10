@@ -2,7 +2,6 @@ package GuiMenus;
 
 import GameEngine.Game;
 import GameEngine.CheckerBoard.Color;
-import GameEngine.Game.GameType;
 import GameEngine.Player.AIPlayer;
 import GameEngine.Player.Player;
 import GameEngine.Player.RealPlayer;
@@ -77,7 +76,7 @@ public class LocalGameMenu extends Menu{
 				choosePlayer1Container.setVisible(true);
 				choosePlayer2Container.setVisible(false);
 
-				localGame = new Game(GameType.LOCAL, player1, player2);
+				localGame = new Game(player1, player2);
 
 				Main.Main.getGameEngine().init(localGame);
 				MenuHandler.changeMenu(19);

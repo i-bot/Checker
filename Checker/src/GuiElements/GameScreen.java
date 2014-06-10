@@ -56,8 +56,8 @@ public class GameScreen extends Button {
 	public void update(){
 		checkerBoard = gameEngine.getCurrentCheckerBoard();
 
-		lightPlayer_name.setText(gameEngine.getCurrentGame().getPlayer1().getName());
-		darkPlayer_name.setText(gameEngine.getCurrentGame().getPlayer2().getName());
+		lightPlayer_name.setText(gameEngine.getCurrentGame().getLightPlayer().getName());
+		darkPlayer_name.setText(gameEngine.getCurrentGame().getDarkPlayer().getName());
 
 		updateCurrentPlayerLabel();
 	}
@@ -65,7 +65,7 @@ public class GameScreen extends Button {
 	public void updateCurrentPlayerLabel(){
 		if(!gameEngine.isGameOver()){
 			Player currentPlayer = gameEngine.getCurrentPlayer();
-			currentPlayerLabel.setText("It's your turn " + currentPlayer.getName() + " (" + ((currentPlayer == gameEngine.getCurrentGame().getPlayer1())? "light" : "dark") + ")");
+			currentPlayerLabel.setText("It's your turn " + currentPlayer.getName() + " (" + ((currentPlayer.getColor().toString().toLowerCase())) + ")");
 		}
 		else currentPlayerLabel.setText(gameEngine.getWinner().getName() + " has won!");
 	}

@@ -1,5 +1,6 @@
 package GameEngine.CheckerBoard;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -11,25 +12,31 @@ public class CheckerBoard {
 	private Piece[][] pieces;
 	private ArrayList<Piece> piecesOnBoard, lightCapturedPieces, darkCapturedPieces;
 
+	//	will later be replaced by inputs from files
+	private Dimension d_checkerBoard = new Dimension(8, 8);
+	private int max_pieces = 12;
+
 	public CheckerBoard() {
-		pieces = new Piece[8][8];
+		int y_total = d_checkerBoard.height, x_total = d_checkerBoard.width;
+		pieces = new Piece[y_total][x_total];
 
 		int n_lightPieces = 0;
-		int n_darkPieces = 0;
-		for(int y = 0; y < pieces.length; y++){
+		for(int y = 0; y <= max_pieces / x_total * 2; y++){
 			for(int x = 0; x < pieces[y].length; x++){
-				if(((y % 2 == 0 && x % 2 == 0) || (y % 2 == 1 && x % 2 == 1)) && y != 3 && y != 4){
-					if(n_lightPieces < 12){
-						pieces[x][y] = new Piece(x, y, Color.LIGHT);
-						n_lightPieces++;
-					}
-					else if(n_darkPieces < 12){
-						pieces[x][y] = new Piece(x, y, Color.DARK);
-						n_darkPieces++;
-					}
-					else pieces[x][y] = null;
+				if(((y % 2 == 0 && x % 2 == 0) || (y % 2 == 1 && x % 2 == 1)) && n_lightPieces < max_pieces){
+					pieces[x][y] = new Piece(x, y, Color.LIGHT);
+					n_lightPieces++;
 				}
-				else pieces[x][y] = null;
+			}
+		}
+
+		int n_darkPieces = 0;
+		for(int y = y_total - 1; y >= y_total - 1 - (max_pieces / x_total * 2); y--){
+			for(int x = 0; x < pieces[y].length; x++){
+				if(((y % 2 == 0 && x % 2 == 0) || (y % 2 == 1 && x % 2 == 1)) && n_darkPieces < max_pieces){
+					pieces[x][y] = new Piece(x, y, Color.DARK);
+					n_darkPieces++;
+				}
 			}
 		}
 
@@ -53,6 +60,7 @@ public class CheckerBoard {
 				if(pieces[y][x] != null) temp.add(pieces[y][x]);
 			}
 		}
+
 		return temp;
 	}
 
@@ -80,15 +88,14 @@ public class CheckerBoard {
 		return darkCapturedPieces;
 	}
 
-	public Color isGameOver(Rule rule, Color color_currentPlayer){
-		Color color_winner = (lightCapturedPieces.size() == 12)? Color.DARK : ((darkCapturedPieces.size() == 12)? Color.LIGHT : null);
-		if(rule.getMovesWithJumps(color_currentPlayer).size() == 0 && rule.getNormalMoves(color_currentPlayer).size() == 0) 
-			color_winner = (color_currentPlayer == Color.DARK)? Color.LIGHT : Color.DARK;
+	public Color isGameOver(Rule rule, Color c_currentPlayer){
+		Color color_winner = (lightCapturedPieces.size() == max_pieces)? Color.DARK : ((darkCapturedPieces.size() == max_pieces)? Color.LIGHT : null);
+		if(rule.getMovesWithJumps(c_currentPlayer).size() == 0 && rule.getNormalMoves(c_currentPlayer).size() == 0) 
+			color_winner = (c_currentPlayer == Color.DARK)? Color.LIGHT : Color.DARK;
 		return color_winner;
 	}
 
 	public Boolean executeMove(Move m, Rule currentRule, Player currentPlayer) throws InterruptedException{
-
 		if(currentRule.checkMove(m)){		
 			m.getSelectedPiece().setSelected(false);
 
@@ -110,24 +117,8 @@ public class CheckerBoard {
 			ArrayList<Point> destinationPoints = m.getDestinationPoints();
 
 			for(Point destinationPoint : destinationPoints){
-				if(currentRule.isJump(new Move(p, destinationPoint))){
-					Piece capturedPiece = pieces[destinationPoint.x - (destinationPoint.x - p.getX()) / Math.abs(destinationPoint.x - p.getX())] 
-							[destinationPoint.y - (destinationPoint.y - p.getY()) / Math.abs(destinationPoint.y - p.getY())];
-					if(p.getPieceColor() == Color.LIGHT)
-						lightCapturedPieces.add(capturedPiece);
-					if(p.getPieceColor() == Color.DARK)
-						darkCapturedPieces.add(capturedPiece);
-					pieces[capturedPiece.getX()][capturedPiece.getY()] = null;
-				}
-
-				pieces[p.getX()][p.getY()] = null;
-
-				pieces[destinationPoint.x][destinationPoint.y] = p;
-				p.changePosition(destinationPoint.x, destinationPoint.y);
-
-				if(currentRule.canBeMadeToKing(p)) p.makeToKing();
-
-				updatePiecesOnBoard();
+				movePiece(p, destinationPoint, currentRule);
+				
 				currentRule.updateCurrentCheckerBoard();
 
 				Gui.Gui.repaintScreen();
@@ -136,7 +127,7 @@ public class CheckerBoard {
 					Thread.sleep(1000);
 				}
 			}
-			
+
 			return true;
 		}
 
@@ -147,31 +138,34 @@ public class CheckerBoard {
 		Move m = new Move(pieces[start.x][start.y], end);
 
 		if(currentRule.checkMove(m)){
-
 			Piece p = m.getSelectedPiece();
 			ArrayList<Point> destinationPoints = m.getDestinationPoints();
 
 			for(Point destinationPoint : destinationPoints){
-				if(currentRule.isJump(m)){
-					Piece capturedPiece = pieces[destinationPoint.x - (destinationPoint.x - p.getX()) / Math.abs(destinationPoint.x - p.getX())] 
-							[destinationPoint.y - (destinationPoint.y - p.getY()) / Math.abs(destinationPoint.y - p.getY())];
-					if(p.getPieceColor() == Color.LIGHT)
-						lightCapturedPieces.add(capturedPiece);
-					if(p.getPieceColor() == Color.DARK)
-						darkCapturedPieces.add(capturedPiece);
-					pieces[capturedPiece.getX()][capturedPiece.getY()] = null;
-				}
-
-				pieces[p.getX()][p.getY()] = null;
-
-				pieces[destinationPoint.x][destinationPoint.y] = p;
-				p.changePosition(destinationPoint.x, destinationPoint.y);
-
-				updatePiecesOnBoard();
+				movePiece(p, destinationPoint, currentRule);
 			}
-
-			if(currentRule.canBeMadeToKing(p)) p.makeToKing();
 		}
+	}
+
+	private void movePiece(Piece p, Point destinationPoint, Rule currentRule){
+		if(currentRule.isJump(new Move(p, destinationPoint))){
+			Piece capturedPiece = pieces[destinationPoint.x - (destinationPoint.x - p.getX()) / Math.abs(destinationPoint.x - p.getX())] 
+					[destinationPoint.y - (destinationPoint.y - p.getY()) / Math.abs(destinationPoint.y - p.getY())];
+			if(p.getPieceColor() == Color.LIGHT)
+				lightCapturedPieces.add(capturedPiece);
+			if(p.getPieceColor() == Color.DARK)
+				darkCapturedPieces.add(capturedPiece);
+			pieces[capturedPiece.getX()][capturedPiece.getY()] = null;
+		}
+
+		pieces[p.getX()][p.getY()] = null;
+
+		pieces[destinationPoint.x][destinationPoint.y] = p;
+		p.changePosition(destinationPoint.x, destinationPoint.y);
+
+		if(currentRule.canBeMadeToKing(p)) p.makeToKing();
+
+		updatePiecesOnBoard();
 	}
 
 	public CheckerBoard clone(){

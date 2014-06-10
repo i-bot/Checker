@@ -3,7 +3,6 @@ package GameEngine.CheckerBoard;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
-
 public class Piece{
 
 	private Point position;
@@ -34,6 +33,10 @@ public class Piece{
 		position = new Point(x, y);
 	}
 
+	public void changePosition(Point p) {
+		position = p;
+	}
+	
 	public void makeToKing(){
 		pieceType = PieceType.KING;
 
@@ -100,9 +103,5 @@ public class Piece{
 
 	public enum PieceType {
 		MAN, KING;
-	}
-
-	public void changePosition(Point p) {
-		position = p;
 	}
 }

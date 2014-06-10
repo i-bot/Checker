@@ -35,16 +35,7 @@ public class Move {
 	public Boolean equals(Move m){
 		return (selectedPiece.equals(m.getSelectedPiece()) && destinationPoints.equals(m.getDestinationPoints()));
 	}
-	
-	public Boolean equals_player(Move m){
-		if(!selectedPiece.equals(m.getSelectedPiece())) return false;
-		
-		for(int i = 0; i < m.getDestinationPoints().size() && i < destinationPoints.size(); i++)
-			if(!m.getDestinationPoints().get(i).equals(destinationPoints.get(i))) return false;
-		
-		return true;
-	}
-	
+
 	public Move clone(){
 		ArrayList<Point> clonedDestinationPoints = new ArrayList<>();
 		for(Point p : destinationPoints)

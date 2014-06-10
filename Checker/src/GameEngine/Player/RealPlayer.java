@@ -73,7 +73,7 @@ public class RealPlayer extends Player{
 	@Override
 	public Boolean containsMove(Move m) {
 		for(Move moveFromList : movesWithJumps)
-			if(moveFromList.equals_player(m))
+			if(moveFromList.equals(m))
 				return true;
 
 		return movesWithJumps.size() == 0;
@@ -101,7 +101,7 @@ public class RealPlayer extends Player{
 	private Boolean handleMouseInput(Point p, CheckerBoard checkerBoard, Rule rule) throws InterruptedException{
 		Piece clickedPiece = checkerBoard.getPiece(p);
 		Move currentMove = null;
-		if(clickedPiece != null && clickedPiece.getPieceColor() == color_player && canChangeSelectedPiece())
+		if(clickedPiece != null && clickedPiece.getPieceColor() == getColor() && canChangeSelectedPiece())
 			handleSelecetedPiece(clickedPiece);
 		else if(clickedPiece == null && hasPieceSelected())
 			currentMove = handleDestinationPoint(p);

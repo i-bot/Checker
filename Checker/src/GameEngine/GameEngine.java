@@ -15,7 +15,9 @@ public class GameEngine extends Thread{
 
 	public void init(Game game){
 		this.game = game;
-		game.changeCurrentPlayer(game.getPlayer1());
+		
+		game.changeCurrentPlayer(game.getLightPlayer());
+		
 		checkerBoard = new CheckerBoard();
 		rule = new DefaultRule(checkerBoard);
 	}
@@ -37,11 +39,11 @@ public class GameEngine extends Thread{
 	} 
 
 	private void handleNextMove(Player currentPlayer) throws InterruptedException{		
-		currentPlayer.setMovesWithJumps(rule.getMovesWithJumps(currentPlayer.getColor_Player()));
+		currentPlayer.setMovesWithJumps(rule.getMovesWithJumps(currentPlayer.getColor()));
 		Move m = currentPlayer.getAndExecuteNextMove(checkerBoard, rule);
 		
 		Move t_m = m.clone();
-		game.changeCurrentPlayer((currentPlayer == game.getPlayer1())? game.getPlayer2() : game.getPlayer1());
+		game.changeCurrentPlayer(game.getOpponentOfCurrentPlayer());
 		getCurrentPlayer().handleEnemyMove(t_m);
 	}
 
@@ -60,10 +62,10 @@ public class GameEngine extends Thread{
 	}
 	
 	public synchronized Boolean isGameOver(){
-		return checkerBoard.isGameOver(rule, game.getCurrentPlayer().getColor_Player()) != null;
+		return checkerBoard.isGameOver(rule, game.getCurrentPlayer().getColor()) != null;
 	}
 	
 	public synchronized Player getWinner(){
-		return game.getPlayerByColor(checkerBoard.isGameOver(rule, game.getCurrentPlayer().getColor_Player()));
+		return game.getPlayerByColor(checkerBoard.isGameOver(rule, game.getCurrentPlayer().getColor()));
 	}
 }

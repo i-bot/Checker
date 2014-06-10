@@ -10,7 +10,7 @@ import GameEngine.GameRules.Rule;
 public abstract class Player {
 	
 	protected String name;
-	protected Color color_player;
+	protected Color color;
 	protected ArrayList<Move> movesWithJumps;
 	
 	public abstract void clear();
@@ -18,8 +18,8 @@ public abstract class Player {
 	public abstract Move getAndExecuteNextMove(CheckerBoard checkerBoard, Rule rule) throws InterruptedException;
 	public abstract void handleEnemyMove(Move move_enemy);
 	
-	public Player(Color color_player){
-		this.color_player = color_player;
+	public Player(Color color){
+		this.color = color;
 		movesWithJumps = new ArrayList<>();
 	}
 
@@ -36,13 +36,13 @@ public abstract class Player {
 		return name;
 	}
 	
-	public Color getColor_Player(){
-		return color_player;
+	public Color getColor(){
+		return color;
 	}
 
 	public Move getRandomMove(Rule rule){
-		ArrayList<Move> allPossibleMoves = rule.getMovesWithJumps(color_player);
-		allPossibleMoves.addAll(rule.getNormalMoves(color_player));
+		ArrayList<Move> allPossibleMoves = rule.getMovesWithJumps(color);
+		allPossibleMoves.addAll(rule.getNormalMoves(color));
 		return allPossibleMoves.get((int) (Math.random() * allPossibleMoves.size()));
 	}
 }

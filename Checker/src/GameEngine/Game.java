@@ -4,38 +4,29 @@ import GameEngine.CheckerBoard.Color;
 import GameEngine.Player.Player;
 
 public class Game {
-	private GameType gameType;
-	private Player player1, player2, currentPlayer;
 	
-	public Game(GameType gameType, Player player1, Player player2) {
-		this.gameType = gameType;
-		this.player1 = player1;
-		this.player2 = player2;
-		currentPlayer = player1;
+	private Player lightPlayer, darkPlayer, currentPlayer;
+	
+	public Game(Player lightPlayer, Player darkPlayer) {
+		this.lightPlayer = lightPlayer;
+		this.darkPlayer = darkPlayer;
+		currentPlayer = lightPlayer;
 	}
 
-	public void setGameType(GameType gameType) {
-		this.gameType = gameType;
-	}
-
-	public GameType getGameType() {
-		return gameType;
-	}
-
-	public void setPlayer1(Player player1) {
-		this.player1 = player1;
+	public void setLightPlayer(Player lightPlayer) {
+		this.lightPlayer = lightPlayer;
 	}
 	
-	public Player getPlayer1() {
-		return player1;
+	public Player getLightPlayer() {
+		return lightPlayer;
 	}
 
-	public void setPlayer2(Player player2) {
-		this.player2 = player2;
+	public void setDarkPlayer(Player darkPlayer) {
+		this.darkPlayer = darkPlayer;
 	}
 	
-	public Player getPlayer2() {
-		return player2;
+	public Player getDarkPlayer() {
+		return darkPlayer;
 	}
 
 	public void changeCurrentPlayer(Player currentPlayer) {
@@ -47,10 +38,10 @@ public class Game {
 	}
 	
 	public Player getPlayerByColor(Color color){
-		return (player1.getColor_Player() == color)? player1 : ((player2.getColor_Player() == color)? player2 : null);
+		return (lightPlayer.getColor() == color)? lightPlayer : ((darkPlayer.getColor() == color)? darkPlayer : null);
 	}
 	
-	public enum GameType{
-		LOCAL, NETWORK;
-	}	
+	public Player getOpponentOfCurrentPlayer(){
+		return (currentPlayer == lightPlayer)? darkPlayer : lightPlayer;
+	}
 }

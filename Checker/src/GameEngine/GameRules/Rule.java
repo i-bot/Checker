@@ -21,6 +21,7 @@ public abstract class Rule {
 	public abstract Boolean isNormalMove(Move m);
 	public abstract Boolean isJump(Move m);	
 	public abstract Boolean canBeMadeToKing(Piece piece);
+	public abstract Rule clone();
 	
 	public Rule(CheckerBoard originalCheckerBoard){
 		this.originalCheckerBoard = originalCheckerBoard;
@@ -29,10 +30,5 @@ public abstract class Rule {
 
 	public void updateCurrentCheckerBoard(){
 		currentCheckerBoard = originalCheckerBoard.clone();
-	}
-	
-	public Rule clone(){
-		if(this.getClass().equals(DefaultRule.class)) return new DefaultRule(originalCheckerBoard.clone());
-		return null;
 	}
 }

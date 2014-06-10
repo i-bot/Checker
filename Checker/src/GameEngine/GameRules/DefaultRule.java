@@ -290,4 +290,9 @@ public class DefaultRule extends Rule{
 	private Boolean canBeMadeToKing(Point position, Color color) {
 		return ((color == Color.LIGHT && position.getY() == 7) || (color == Color.DARK && position.getY() == 0));
 	}
+	
+	public DefaultRule clone(){
+		updateCurrentCheckerBoard();
+		return new DefaultRule(currentCheckerBoard.clone());
+	}
 }
