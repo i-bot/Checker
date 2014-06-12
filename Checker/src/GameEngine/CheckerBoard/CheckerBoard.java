@@ -95,7 +95,7 @@ public class CheckerBoard {
 		return color_winner;
 	}
 
-	public Boolean executeMove(Move m, Rule currentRule, Player currentPlayer) throws InterruptedException{
+	public Boolean executeMoveWithRepainting(Move m, Rule currentRule, Player currentPlayer) throws InterruptedException{
 		if(currentRule.checkMove(m)){		
 			m.getSelectedPiece().setSelected(false);
 
@@ -134,11 +134,9 @@ public class CheckerBoard {
 		return false;
 	}
 
-	public void executeTestMove(Point start, Point end, Rule currentRule){
-		Move m = new Move(pieces[start.x][start.y], end);
-
+	public void executeMove(Move m, Rule currentRule){
 		if(currentRule.checkMove(m)){
-			Piece p = m.getSelectedPiece();
+			Piece p = m.getSelectedPiece().clone();
 			ArrayList<Point> destinationPoints = m.getDestinationPoints();
 
 			for(Point destinationPoint : destinationPoints){

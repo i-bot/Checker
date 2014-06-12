@@ -38,17 +38,18 @@ public class DefaultRule extends Rule{
 		for(ArrayList<Point> t_points : getAllPossiblePositions(currentCheckerBoard.getPiece(currentPosition), 2)){
 			@SuppressWarnings("unchecked")
 			ArrayList<Point> currentDestinationPoints = (ArrayList<Point>) destinationPoints.clone();
-			for(Point t_p : t_points)
-				if(isJump(new Move((destinationPoints.size() == 0)? currentPiece : currentCheckerBoard.getPiece(destinationPoints.get(destinationPoints.size() - 1)), t_p))){
+			for(Point t_p : t_points){
+				Move m = new Move((destinationPoints.size() == 0)? currentPiece : currentCheckerBoard.getPiece(destinationPoints.get(destinationPoints.size() - 1)), t_p);
+				if(isJump(m)){
 					currentDestinationPoints.add(t_p);
-					currentCheckerBoard.executeTestMove((destinationPoints.size() == 0)? currentPiece.getPosition() : destinationPoints.get(destinationPoints.size() - 1), t_p, this);
+					currentCheckerBoard.executeMove(new Move((destinationPoints.size() == 0)? currentPiece : currentCheckerBoard.getPiece(destinationPoints.get(destinationPoints.size() - 1)), t_p), this);
 					ArrayList<Move> t_moves = computeMovesWithJumps(currentPiece, t_p, currentDestinationPoints);
 					if(t_moves.size() > 0)
 						movesWithJumps.addAll(t_moves);
 					else movesWithJumps.add(new Move(currentPiece, currentDestinationPoints));
 					break;
 				}
-
+			}
 			currentCheckerBoard = t_board.clone();
 		}
 
@@ -180,7 +181,7 @@ public class DefaultRule extends Rule{
 
 			if(Math.abs(p_start.x - p_end.x) != Math.abs(p_start.y - p_end.y))
 				return false;
-			
+
 			if(m.getSelectedPiece().getPieceType() == Piece.PieceType.MAN){
 				if(m.getSelectedPiece().getPieceColor() == Color.LIGHT && isNormalMove_Light_Man(p_start, p_end))
 					return true;
@@ -213,7 +214,7 @@ public class DefaultRule extends Rule{
 					return false;	
 			}			
 			if(canBeMadeToKing(p, m.getSelectedPiece().getPieceColor())) m.getSelectedPiece().makeToKing();
-			
+
 			lastPosition = p;
 		}
 
@@ -290,7 +291,48 @@ public class DefaultRule extends Rule{
 	private Boolean canBeMadeToKing(Point position, Color color) {
 		return ((color == Color.LIGHT && position.getY() == 7) || (color == Color.DARK && position.getY() == 0));
 	}
-	
+
+	@Override
+	public ArrayList<Move> getOpponentsMovesForJumpingPiece(Piece piece) {
+		ArrayList<Move> allOpponentsMoves = getMovesWithJumps(Color.getOpponentColor(piece.getPieceColor()));
+		ArrayList<Move> opponentsMovesForJumpingPiece = new ArrayList<>();
+		Point p_piece = piece.getPosition();
+
+		for(Move opponentsMove : allOpponentsMoves){
+			CheckerBoard t_checkerBoard = currentCheckerBoard.clone();
+			t_checkerBoard.executeMove(opponentsMove, this);
+			if(t_checkerBoard.getPiece(p_piece) == null)
+				opponentsMovesForJumpingPiece.add(opponentsMove);
+		}
+
+		return opponentsMovesForJumpingPiece;
+	}
+
+	@Override
+	public ArrayList<Move> getOpponentsMovesForJumpingSelectedPiece(Move m) {
+		currentCheckerBoard.executeMove(m, this);
+
+		ArrayList<Move> opponentsMovesForJumpingSelectedPiece = getOpponentsMovesForJumpingPiece(m.getSelectedPiece());
+		updateCurrentCheckerBoard();
+
+		return opponentsMovesForJumpingSelectedPiece;
+	}
+
+	@Override
+	public ArrayList<Move> getOpponentsMovesForJumpingSelectedPieceOfLastMove(ArrayList<Move> moves) {
+		for(int i = 0; i > moves.size() - 1; i++)currentCheckerBoard.executeMove(moves.get(i), this);
+
+		ArrayList<Move> opponentsMovesForJumpingSelectedPieceOfLastMove = getOpponentsMovesForJumpingSelectedPiece(moves.get(moves.size() - 1));
+		updateCurrentCheckerBoard();
+
+		return opponentsMovesForJumpingSelectedPieceOfLastMove;
+	}
+
+	@Override
+	public Rule clone(CheckerBoard changedCheckerBoard) {
+		return new DefaultRule(changedCheckerBoard);
+	}	
+
 	public DefaultRule clone(){
 		updateCurrentCheckerBoard();
 		return new DefaultRule(currentCheckerBoard.clone());

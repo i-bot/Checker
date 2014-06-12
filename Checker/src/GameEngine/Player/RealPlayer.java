@@ -94,7 +94,6 @@ public class RealPlayer extends Player{
 			Thread.sleep(50);
 		}
 
-		System.out.println("RealPlayer.getNextMove()" + t_Move);
 		return t_Move;
 	}
 
@@ -112,7 +111,7 @@ public class RealPlayer extends Player{
 			if(t_Move == null) t_Move = currentMove.clone();
 			else t_Move.getDestinationPoints().add(currentMove.getDestinationPoints().get(currentMove.getDestinationPoints().size() - 1));
 			
-			checkerBoard.executeMove(currentMove, rule, this);
+			checkerBoard.executeMoveWithRepainting(currentMove, rule, this);
 			clear();
 			
 			if(rule.canJump(currentMove.getSelectedPiece()) && !normalMove){

@@ -21,6 +21,10 @@ public abstract class Rule {
 	public abstract Boolean isNormalMove(Move m);
 	public abstract Boolean isJump(Move m);	
 	public abstract Boolean canBeMadeToKing(Piece piece);
+	public abstract ArrayList<Move> getOpponentsMovesForJumpingPiece(Piece piece);
+	public abstract ArrayList<Move> getOpponentsMovesForJumpingSelectedPiece(Move m);
+	public abstract ArrayList<Move> getOpponentsMovesForJumpingSelectedPieceOfLastMove(ArrayList<Move> moves);
+	public abstract Rule clone(CheckerBoard changedCheckerBoard);
 	public abstract Rule clone();
 	
 	public Rule(CheckerBoard originalCheckerBoard){

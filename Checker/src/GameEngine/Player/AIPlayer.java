@@ -118,7 +118,7 @@ public class AIPlayer extends Player{
 			aiMove = getRandomMove(rule);
 		
 		Move t_aiMove = aiMove.clone();
-		checkerBoard.executeMove(aiMove, rule, this);
+		checkerBoard.executeMoveWithRepainting(aiMove, rule, this);
 		return t_aiMove;
 	}
 

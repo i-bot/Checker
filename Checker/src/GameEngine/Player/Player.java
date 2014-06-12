@@ -24,7 +24,6 @@ public abstract class Player {
 	}
 
 	public void setMovesWithJumps(ArrayList<Move> movesWithJumps){
-		System.out.println("Player.setMovesWithJumps()" + movesWithJumps.size());
 		this.movesWithJumps = movesWithJumps;
 	}
 

@@ -44,7 +44,7 @@ public class GameEngine extends Thread{
 		
 		Move t_m = m.clone();
 		game.changeCurrentPlayer(game.getOpponentOfCurrentPlayer());
-		getCurrentPlayer().handleEnemyMove(t_m);
+		getCurrentPlayer().handleEnemyMove(t_m);		
 	}
 
 	@Override
