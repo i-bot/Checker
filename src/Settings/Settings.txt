@@ -1,0 +1,6 @@
+/Gui/swinggui.txt
+/AIs/AIs.txt
+/Game/Default.txt
+100
+100
+100000

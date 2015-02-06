@@ -1,7 +1,0 @@
-English
-1600:900
-/AIs/AIs.txt
-/Graphics/graphics.txt
-/Game/Default.txt
-1000
-5000
